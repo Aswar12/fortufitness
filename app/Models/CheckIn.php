@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class CheckIn extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'user_id',
         'check_in_date',
         'check_out_date',
+        'check_in_method',
     ];
 
 

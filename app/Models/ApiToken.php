@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ApiToken extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'user_id',
         'token',

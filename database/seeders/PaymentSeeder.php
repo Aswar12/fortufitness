@@ -4,6 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use App\Models\Membership;
+use App\Models\Payment;
 
 class PaymentSeeder extends Seeder
 {
@@ -12,19 +15,6 @@ class PaymentSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = User::all();
-        $memberships = Membership::all();
-
-        foreach ($users as $user) {
-            $membership = $memberships->random();
-            $payment = new Payment();
-            $payment->user_id = $user->id;
-            $payment->membership_id = $membership->id;
-            $payment->payment_method = 'Transfer Bank';
-            $payment->payment_date = now();
-            $payment->amount = 100000;
-            $payment->status = 'success';
-            $payment->save();
-        }
+        Payment::factory()->count(10)->create();
     }
 }

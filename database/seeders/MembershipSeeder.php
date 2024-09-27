@@ -2,8 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
+use App\Models\MembershipType;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Membership;
 
 class MembershipSeeder extends Seeder
 {
@@ -12,17 +15,7 @@ class MembershipSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = User::all();
-        $membershipTypes = MembershipType::all();
-
-        foreach ($users as $user) {
-            $membershipType = $membershipTypes->random();
-            $membership = new Membership();
-            $membership->user_id = $user->id;
-            $membership->membership_type_id = $membershipType->id;
-            $membership->start_date = now();
-            $membership->end_date = now()->addYear();
-            $membership->save();
-        }
+        // Get all users
+        Membership::factory()->count(10)->create();
     }
 }

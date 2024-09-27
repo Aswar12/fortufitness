@@ -14,12 +14,18 @@ return new class extends Migration
         Schema::create('memberships', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('membership_type_id')->constrained();
+            $table->unsignedBigInteger('membership_type_id');
             $table->date('start_date');
             $table->date('end_date');
             $table->enum('status', ['active', 'expired'])->default('active');
             $table->timestamps();
         });
+
+        if (Schema::hasTable('membership_types')) {
+            Schema::table('memberships', function (Blueprint $table) {
+                $table->foreign('membership_type_id')->constrained('membership_types');
+            });
+        }
     }
 
     /**

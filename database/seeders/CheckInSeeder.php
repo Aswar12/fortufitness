@@ -2,17 +2,18 @@
 
 namespace Database\Seeders;
 
-use App\Models\MembershipType;
+use App\Models\CheckIn;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class MembershipTypeSeeder extends Seeder
+
+class CheckInSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        MembershipType::factory()->count(10)->create();
+        CheckIn::factory()->count(10)->create();
     }
 }
