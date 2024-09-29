@@ -7,7 +7,6 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
-use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -18,7 +17,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-class 1PanelProvider extends PanelProvider
+class PanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {

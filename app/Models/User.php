@@ -84,4 +84,18 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isMember()
+    {
+        return $this->role === 'member';
+    }
+    public function getRoleAttribute($value)
+    {
+        return in_array($value, ['admin', 'member']) ? $value : 'member';
+    }
 }
