@@ -4,14 +4,18 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use Filament\Tables\Columns\TextColumn;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Columns\SelectColumn;
 
 class UserResource extends Resource
 {
@@ -23,7 +27,26 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                //
+                TextInput::make('name')
+                    ->required()
+                    ->label('Nama'),
+                TextInput::make('email')
+                    ->required()
+                    ->label('Email'),
+                TextInput::make('phone_number')
+                    ->required()
+                    ->label('NoHp/Wa'),
+                Select::make('role')
+                    ->required()
+                    ->label('Role')
+                    ->options([
+                        'admin' => 'Admin',
+                        'member' => 'Member',
+                    ]),
+                TextInput::make('password')
+                    ->required()
+                    ->label('Password')
+                    ->password(),
             ]);
     }
 
@@ -31,18 +54,28 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('name')
+                    ->label('Nama'),
+                TextColumn::make('email')
+                    ->label('Email'),
+                TextColumn::make('phone_number')
+                    ->label('NoHp/Wa'),
+                SelectColumn::make('role')
+                    ->label('Role')
+                    ->options([
+                        'admin' => 'Admin',
+                        'member' => 'Member',
+                    ]),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 
