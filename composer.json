@@ -1,0 +1,14 @@
+{
+    "name": "aswar12/fortufitness",
+    "description": "A fitness-related application",
+    "require": {
+        "php": ">=8.1",
+        "monolog/monolog": "^3.7"
+    },
+    "authors": [
+        {
+            "name": "Aswar",
+            "email": "you@example.com"
+        }
+    ]
+}
