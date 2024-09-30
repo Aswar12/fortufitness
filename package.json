@@ -1,0 +1,14 @@
+{
+  "name": "fortufitness",
+  "version": "1.0.0",
+  "description": "A fitness-related application",
+  "main": "index.js",
+  "scripts": {
+    "build": "uglifyjs src/main.js -o dist/main.min.js"
+  },
+  "author": "Aswar",
+  "license": "ISC",
+  "devDependencies": {
+    "uglify-js": "^3.19.3"
+  }
+}
