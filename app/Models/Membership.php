@@ -25,4 +25,8 @@ class Membership extends Model
     {
         return $this->belongsTo(MembershipType::class);
     }
+    public function scopeActive($query)
+    {
+        return $query->where('end_date', '>=', now());
+    }
 }

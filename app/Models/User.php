@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Membership;
 
 class User extends Authenticatable
 {
@@ -84,7 +85,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
+    public function activeMembership()
+    {
+        return Membership::active()->orderBy('end_date', 'desc')->first();
+    }
     public function isAdmin()
     {
         return $this->role === 'admin';
