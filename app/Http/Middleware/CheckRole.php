@@ -19,10 +19,12 @@ class CheckRole
     public function handle(Request $request, Closure $next)
     {
         $user = Auth::user();
+        if ($request->path() == 'admin/login') {
+            return redirect('/login');
+        }
         if ($user) {
             if ($user->role == 'admin') {
                 return redirect('/admin');
-            } elseif ($user->role == 'member') {
             }
         }
         return $next($request);
