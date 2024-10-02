@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class CheckRole
 {
@@ -18,13 +19,12 @@ class CheckRole
     public function handle(Request $request, Closure $next)
     {
         $user = Auth::user();
-
-        if ($user->role === 'admin') {
-            return redirect('/admin');
-        } elseif ($user->role === 'member') {
-            return redirect('/dashboard');
+        if ($user) {
+            if ($user->role == 'admin') {
+                return redirect('/admin');
+            } elseif ($user->role == 'member') {
+            }
         }
-
         return $next($request);
     }
 }
