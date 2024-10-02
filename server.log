@@ -1,0 +1,25 @@
+
+   Error 
+
+  Call to undefined method Illuminate\Foundation\Configuration\Middleware::push()
+
+  at bootstrap/app.php:15
+     11▕         commands: __DIR__.'/../routes/console.php',
+     12▕         health: '/up',
+     13▕     )
+     14▕     ->withMiddleware(function (Middleware $middleware) {
+  ➜  15▕         $middleware->push(\App\Http\Middleware\CheckRole::class);
+     16▕         //
+     17▕     })
+     18▕     ->withExceptions(function (Exceptions $exceptions) {
+     19▕         //
+
+      [2m+17 vendor frames [22m
+
+  18  [internal]:0
+      Illuminate\Foundation\Application::Illuminate\Foundation\{closure}()
+      [2m+6 vendor frames [22m
+
+  25  artisan:13
+      Illuminate\Foundation\Application::handleCommand()
+
