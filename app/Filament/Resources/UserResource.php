@@ -17,39 +17,39 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label('Nama Lengkap')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
                     ->email()
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('password')
+                Forms\Components\TextInput::make('password')->label('Kata Sandi')
                     ->password()
                     ->required()
                     ->maxLength(255),
-                Forms\Components\DateTimePicker::make('two_factor_confirmed_at'),
-                Forms\Components\TextInput::make('current_team_id')
-                    ->numeric(),
-                Forms\Components\TextInput::make('profile_photo_path')
-                    ->maxLength(2048),
-                Forms\Components\TextInput::make('role')
-                    ->required(),
-                Forms\Components\TextInput::make('gender')
-                    ->maxLength(255),
-                Forms\Components\DatePicker::make('birth_date'),
-                Forms\Components\TextInput::make('phone_number')
+                Forms\Components\Select::make('gender')
+                    ->label('Jenis Kelamin')
+                    ->options([
+                        'Perempuan' => 'Perempuan',
+
+                        'Laki-laki' => 'Laki-laki',
+                    ]),
+                Forms\Components\DatePicker::make('birth_date')
+                    ->label('Tanggal lahir'),
+                Forms\Components\TextInput::make('phone_number')->label('Nomor Telpon/Wa')
                     ->tel()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('address')
+                Forms\Components\Textarea::make('address')->label('Alamat')
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('emergency_contact')
+                Forms\Components\TextInput::make('emergency_contact')->label('Kontak Darurat')
                     ->maxLength(255),
             ]);
     }
@@ -59,30 +59,28 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Nama Lengkap')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label('Alamat Email')
                     ->searchable(),
-
-                Tables\Columns\ImageColumn::make('foto')
-                    ->disk('public')
-                    ->width(50)
-                    ->height(50)
-                    ->defaultImageUrl(url('profile_photo_path'))
-                    ->visibility('public'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                Tables\Columns\TextColumn::make('role'),
+                Tables\Columns\ImageColumn::make('profile_photo_url')
+                    ->label('Foto Profil')
+                    ->height(50),
+                Tables\Columns\TextColumn::make('role')
+                    ->label('Role'),
                 Tables\Columns\TextColumn::make('gender')
+                    ->label('Jenis Kelamin')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('birth_date')
+                    ->label('Tanggal Lahir')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('phone_number')
+                    ->label('Nomor Telepon')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('emergency_contact')
+                    ->label('Kontak Darurat')
                     ->searchable(),
             ])
             ->filters([

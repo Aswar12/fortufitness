@@ -13,42 +13,7 @@ return [
     | This will allow your users to receive real-time notifications.
     |
     */
-    'pages' => [
-        'membership' => [
-            'label' => 'Membership',
-            'icon' => 'heroicon-o-collection',
-            'url' => '/membership',
-            'pages' => [
-                [
-                    'label' => 'Daftar Membership',
-                    'icon' => 'heroicon-o-document-text',
-                    'url' => '/membership',
-                ],
-                [
-                    'label' => 'Tambah Membership',
-                    'icon' => 'heroicon-o-plus',
-                    'url' => '/membership/create',
-                ],
-            ],
-        ],
-        'payment' => [
-            'label' => 'Payment',
-            'icon' => 'heroicon-o-credit-card',
-            'url' => '/payment',
-            'pages' => [
-                [
-                    'label' => 'Daftar Payment',
-                    'icon' => 'heroicon-o-document-text',
-                    'url' => '/payment',
-                ],
-                [
-                    'label' => 'Tambah Payment',
-                    'icon' => 'heroicon-o-plus',
-                    'url' => '/payment/create',
-                ],
-            ],
-        ],
-    ],
+
     'broadcasting' => [
 
         // 'echo' => [
