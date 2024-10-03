@@ -4,18 +4,14 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
-use Filament\Tables\Columns\TextColumn;
 use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Tables\Columns\SelectColumn;
 
 class UserResource extends Resource
 {
@@ -27,26 +23,34 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')
+                Forms\Components\TextInput::make('name')
                     ->required()
-                    ->label('Nama'),
-                TextInput::make('email')
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('email')
+                    ->email()
                     ->required()
-                    ->label('Email'),
-                TextInput::make('phone_number')
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('password')
+                    ->password()
                     ->required()
-                    ->label('NoHp/Wa'),
-                Select::make('role')
-                    ->required()
-                    ->label('Role')
-                    ->options([
-                        'admin' => 'Admin',
-                        'member' => 'Member',
-                    ]),
-                TextInput::make('password')
-                    ->required()
-                    ->label('Password')
-                    ->password(),
+                    ->maxLength(255),
+                Forms\Components\DateTimePicker::make('two_factor_confirmed_at'),
+                Forms\Components\TextInput::make('current_team_id')
+                    ->numeric(),
+                Forms\Components\TextInput::make('profile_photo_path')
+                    ->maxLength(2048),
+                Forms\Components\TextInput::make('role')
+                    ->required(),
+                Forms\Components\TextInput::make('gender')
+                    ->maxLength(255),
+                Forms\Components\DatePicker::make('birth_date'),
+                Forms\Components\TextInput::make('phone_number')
+                    ->tel()
+                    ->maxLength(255),
+                Forms\Components\Textarea::make('address')
+                    ->columnSpanFull(),
+                Forms\Components\TextInput::make('emergency_contact')
+                    ->maxLength(255),
             ]);
     }
 
@@ -54,28 +58,43 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')
-                    ->label('Nama'),
-                TextColumn::make('email')
-                    ->label('Email'),
-                TextColumn::make('phone_number')
-                    ->label('NoHp/Wa'),
-                SelectColumn::make('role')
-                    ->label('Role')
-                    ->options([
-                        'admin' => 'Admin',
-                        'member' => 'Member',
-                    ]),
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('email')
+                    ->searchable(),
+
+                Tables\Columns\ImageColumn::make('foto')
+                    ->disk('public')
+                    ->width(50)
+                    ->height(50)
+                    ->defaultImageUrl(url('profile_photo_path'))
+                    ->visibility('public'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('role'),
+                Tables\Columns\TextColumn::make('gender')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('birth_date')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('phone_number')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('emergency_contact')
+                    ->searchable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
             ]);
     }
 

@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Filament\Resources\UserResource;
 use App\Http\Middleware\CheckRole;
 
 Route::get('/', function () {
