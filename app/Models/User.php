@@ -63,7 +63,6 @@ class User extends Authenticatable
      * @return array<string, string>
      */
 
-    public function getProfilePhotoUrlAttribute() {}
 
     public function memberships()
     {
