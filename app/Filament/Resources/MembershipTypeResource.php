@@ -17,23 +17,26 @@ class MembershipTypeResource extends Resource
 {
     protected static ?string $model = MembershipType::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-calendar';
+    protected static ?string $navigationLabel = 'Jenis Keanggotaan';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label('Nama Tipe Keanggotaan')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('duration')
+                    ->label('Durasi (Hari)')
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('price')
-                    ->required()
-                    ->numeric()
-                    ->prefix('$'),
+                    ->label('Harga')
+                    ->required(),
                 Forms\Components\Textarea::make('description')
+                    ->label('Deskripsi')
                     ->columnSpanFull(),
             ]);
     }
@@ -43,18 +46,23 @@ class MembershipTypeResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Nama Tipe Keanggotaan')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('duration')
-                    ->numeric()
+                    ->label('Durasi (Hari)')
+                    ->formatStateUsing(fn($record) => $record->duration . ' hari')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('price')
-                    ->money()
+                    ->label('Harga')
+                    ->formatStateUsing(fn($record) => 'Rp ' . number_format($record->price, 0, ',', '.'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Dibuat Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Diperbarui Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -64,6 +72,7 @@ class MembershipTypeResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

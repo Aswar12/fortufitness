@@ -17,23 +17,26 @@ class ExpenseResource extends Resource
 {
     protected static ?string $model = Expense::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationIcon = 'heroicon-o-chart-pie';
+    protected static ?string $navigationLabel = 'Pengeluaran Gym';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('description')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('amount')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\DatePicker::make('date')
+                    ->label('Deskripsi')
                     ->required(),
-                Forms\Components\TextInput::make('category')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\TextInput::make('amount')
+                    ->label('Jumlah')
+                    ->required(),
+                Forms\Components\DatePicker::make('date')
+                    ->label('Tanggal')
+                    ->required(),
+                Forms\Components\Select::make('category')
+                    ->label('Kategori')
+                    ->required(),
             ]);
     }
 
@@ -42,23 +45,13 @@ class ExpenseResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('description')
-                    ->searchable(),
+                    ->label('Deskripsi'),
                 Tables\Columns\TextColumn::make('amount')
-                    ->numeric()
-                    ->sortable(),
+                    ->label('Jumlah'),
                 Tables\Columns\TextColumn::make('date')
-                    ->date()
-                    ->sortable(),
+                    ->label('Tanggal'),
                 Tables\Columns\TextColumn::make('category')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label('Kategori'),
             ])
             ->filters([
                 //
@@ -67,11 +60,10 @@ class ExpenseResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
+
 
     public static function getRelations(): array
     {
