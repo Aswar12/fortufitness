@@ -85,5 +85,8 @@ return [
     */
 
     'livewire_loading_delay' => 'default',
-
+    'brand' => [
+        'label' => 'Fortu Fitness',
+        'icon' => 'heroicon-o-document-text',
+    ],
 ];
