@@ -22,7 +22,50 @@
             <label for="password_confirmation" class="block text-gray-700">Confirm Password</label>
             <input type="password" name="password_confirmation" id="password_confirmation" class="w-full p-2 border border-gray-300 rounded mt-1" required>
         </div>
-        <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded mt-4">Register</button>
+        <div class="mt-4">
+            <label for="gender" class="block text-gray-700">Gender</label>
+            <select id="gender" class="w-full p-2 border border-gray-300 rounded mt-1" name="gender" required>
+                <option value="Perempuan">Perempuan</option>
+                <option value="Laki-laki">Laki-laki</option>
+            </select>
+        </div>
+        <div class="mt-4">
+            <label for="birth_date" class="block text-gray-700">Birth Date</label>
+            <input type="date" id="birth_date" name="birth_date" class="w-full p-2 border border-gray-300 rounded mt-1" required>
+        </div>
+        <div class="mt-4">
+            <label for="phone_number" class="block text-gray-700">Phone Number</label>
+            <input type="tel" id="phone_number" name="phone_number" class="w-full p-2 border border-gray-300 rounded mt-1" required>
+        </div>
+        <div class="mt-4">
+            <label for="address" class="block text-gray-700">Address</label>
+            <textarea id="address" name="address" class="w-full p-2 border border-gray-300 rounded mt-1" required></textarea>
+        </div>
+        <div class="mt-4">
+            <label for="emergency_contact" class="block text-gray-700">Emergency Contact</label>
+            <input type="text" id="emergency_contact" name="emergency_contact" class="w-full p-2 border border-gray-300 rounded mt-1" required>
+        </div>
+        @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
+        <div class="mt-4">
+            <label for="terms" class="block text-gray-700">
+                <div class="flex items-center">
+                    <input type="checkbox" name="terms" id="terms" required>
+                    <div class="ml-2">
+                        {!! __('I agree to the :terms_of_service and :privacy_policy', [
+                        'terms_of_service' => '<a target="_blank" href="'.route('terms.show').'" class="underline text-sm text-gray-600 hover:text-gray-900">'.__('Terms of Service').'</a>',
+                        'privacy_policy' => '<a target="_blank" href="'.route('policy.show').'" class="underline text-sm text-gray-600 hover:text-gray-900">'.__('Privacy Policy').'</a>',
+                        ]) !!}
+                    </div>
+                </div>
+            </label>
+        </div>
+        @endif
+        <div class="flex items-center justify-end mt-4">
+            <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('login') }}">
+                {{ __('Already registered?') }}
+            </a>
+            <button type="submit" class="ml-4 bg-blue-500 text-white p-2 rounded">Register</button>
+        </div>
     </form>
 </div>
 @endsection
