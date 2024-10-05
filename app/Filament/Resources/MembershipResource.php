@@ -45,7 +45,7 @@ class MembershipResource extends Resource
                     }),
                 Forms\Components\Hidden::make('status')
                     ->label('Status')
-                    ->default('active'),
+                    ->default('pending'),
                 Forms\Components\Hidden::make('start_date')
                     ->label('Tanggal Mulai')
                     ->default(now()->format('Y-m-d')),
