@@ -4,49 +4,54 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
-use Filament\Tables\Columns\TextColumn;
 use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Tables\Columns\SelectColumn;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $navigationLabel = 'Member';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('name')
+                Forms\Components\TextInput::make('name')
+                    ->label('Nama Lengkap')
                     ->required()
-                    ->label('Nama'),
-                TextInput::make('email')
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('email')
+                    ->email()
                     ->required()
-                    ->label('Email'),
-                TextInput::make('phone_number')
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('password')->label('Kata Sandi')
+                    ->password()
                     ->required()
-                    ->label('NoHp/Wa'),
-                Select::make('role')
-                    ->required()
-                    ->label('Role')
+                    ->maxLength(255),
+                Forms\Components\Select::make('gender')
+                    ->label('Jenis Kelamin')
                     ->options([
-                        'admin' => 'Admin',
-                        'member' => 'Member',
+                        'Perempuan' => 'Perempuan',
+
+                        'Laki-laki' => 'Laki-laki',
                     ]),
-                TextInput::make('password')
-                    ->required()
-                    ->label('Password')
-                    ->password(),
+                Forms\Components\DatePicker::make('birth_date')
+                    ->label('Tanggal lahir'),
+                Forms\Components\TextInput::make('phone_number')->label('Nomor Telpon/Wa')
+                    ->tel()
+                    ->maxLength(255),
+                Forms\Components\Textarea::make('address')->label('Alamat')
+                    ->columnSpanFull(),
+                Forms\Components\TextInput::make('emergency_contact')->label('Kontak Darurat')
+                    ->maxLength(255),
             ]);
     }
 
@@ -54,28 +59,41 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')
-                    ->label('Nama'),
-                TextColumn::make('email')
-                    ->label('Email'),
-                TextColumn::make('phone_number')
-                    ->label('NoHp/Wa'),
-                SelectColumn::make('role')
-                    ->label('Role')
-                    ->options([
-                        'admin' => 'Admin',
-                        'member' => 'Member',
-                    ]),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Nama Lengkap')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('email')
+                    ->label('Alamat Email')
+                    ->searchable(),
+                Tables\Columns\ImageColumn::make('profile_photo_url')
+                    ->label('Foto Profil')
+                    ->height(50),
+                Tables\Columns\TextColumn::make('role')
+                    ->label('Role'),
+                Tables\Columns\TextColumn::make('gender')
+                    ->label('Jenis Kelamin')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('birth_date')
+                    ->label('Tanggal Lahir')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('phone_number')
+                    ->label('Nomor Telepon')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('emergency_contact')
+                    ->label('Kontak Darurat')
+                    ->searchable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
             ]);
     }
 
