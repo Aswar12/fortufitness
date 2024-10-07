@@ -10,5 +10,20 @@ Route::get('/', function () {
 });
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified', CheckRole::class])->group(function () {
-    Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
+    Route::get('/keanggotaan', function () {
+        return view('keanggotaan');
+    });
+
+    Route::get('/transaksi', function () {
+        return view('transaksi');
+    });
+
+    Route::get('/checkin', function () {
+        return view('checkin');
+    });
 });
