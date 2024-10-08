@@ -9,7 +9,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <!-- Styles -->
@@ -20,7 +20,7 @@
     <x-banner />
 
     <div class="fixed top-0 left-0 w-full h-screen bg-cover bg-center z-index: -1; antialiased bg-hero-main"> </div>
-    <div class="relative w-full h-screen overflow-y-auto px-4 bg-gray-700 bg-opacity-60 ">
+    <div class="relative w-full h-screen overflow-y-auto px-4 bg-gray-8s00 bg-opacity-20 ">
         @livewire('navigation-menu')
         <!-- Page Heading -->
         <!-- @if (isset($header))

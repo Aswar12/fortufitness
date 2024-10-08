@@ -13,6 +13,7 @@ class Payment extends Model
         'membership_id',
         'payment_method',
         'payment_date',
+        'proof_of_payment',
         'amount',
         'status',
     ];

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckRole;
 use App\Http\Controllers\UserDashboardController;
@@ -19,9 +20,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         return view('keanggotaan');
     });
 
-    Route::get('/transaksi', function () {
-        return view('transaksi');
-    });
+    Route::get('/transaksi/confirm', [PaymentController::class, 'confirm']);
+
 
     Route::get('/checkin', function () {
         return view('checkin');

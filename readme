@@ -1,4 +1,7 @@
-Tabel Users:
+Berikut adalah struktur database yang telah diperbarui dengan relasi antar tabel:
+
+Tabel Users
+
 id (primary key)
 name
 email
@@ -10,48 +13,74 @@ phone_number
 address
 emergency_contact
 device_token
-Tabel MembershipTypes:
+Relasi:
+
+Memiliki satu Membership (one-to-one)
+Memiliki banyak Payment (one-to-many)
+Memiliki banyak Expense (one-to-many)
+Memiliki satu ApiToken (one-to-one)
+Tabel MembershipTypes
+
 id (primary key)
 name
 duration
 price
 description
-Tabel Memberships:
+Relasi:
+
+Dimiliki oleh satu Membership (one-to-one)
+Tabel Memberships
+
 id (primary key)
 user_id (foreign key)
 membership_type_id (foreign key)
 start_date
 end_date
 status
-Tabel CheckIns:
+Relasi:
+
+Dimiliki oleh satu User (one-to-one)
+Dimiliki oleh satu MembershipType (one-to-one)
+Melakukan banyak Payment (one-to-many)
+Tabel CheckIns
+
 id (primary key)
 user_id (foreign key)
 check_in_time
 check_out_time
 check_in_method
-Tabel Expenses:
+Relasi:
+
+Dimiliki oleh satu User (one-to-one)
+Tabel Expenses
+
 id (primary key)
 description
 amount
 date
 category
-Tabel Payments:
+user_id (foreign key)
+Relasi:
+
+Dimiliki oleh satu User (one-to-one)
+Tabel Payments
+
 id (primary key)
 membership_id (foreign key)
 amount
 payment_date
 payment_method
-Tabel ApiTokens:
+proof_of_payment
+status
+Relasi:
+
+Dilakukan oleh satu Membership (many-to-one)
+Tabel ApiTokens
+
 id (primary key)
 user_id (foreign key)
 token
-Saya juga telah mengingat relasi antara tabel-tabel tersebut, yaitu:
+Relasi:
 
-User memiliki banyak Membership (one-to-many)
-Membership dimiliki oleh satu User (many-to-one)
-User melakukan banyak Payment (one-to-many)
-Payment dilakukan oleh satu Membership (many-to-one)
-User memiliki banyak Expense (one-to-many)
-Expense dimiliki oleh satu User (many-to-one)
-User memiliki satu ApiToken (one-to-one)
-ApiToken dimiliki oleh satu User (one-to-one)
+Dimiliki oleh satu User (one-to-one)
+Dengan demikian, struktur database telah diperbarui dengan relasi antar tabel yang sesuai.
