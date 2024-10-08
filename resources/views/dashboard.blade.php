@@ -7,11 +7,31 @@
 
     <div class="py-2 ">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-gray-700  overflow-hidden shadow-xl sm:rounded-lg">
+            <div class="bg-gray-900 bg-opacity-10 overflow-hidden shadow-xl sm:rounded-lg">
                 <!-- Hero Section -->
                 <div class="hero-section ml-6 p-2 text-center md:text-left">
                     <h1 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white"> Selamat Datang di FortuFitness</h1>
                     <p class="text-sm md:text-lg text-gray-600 dark:text-gray-100">Temukan Potensi Anda dalam Kebugaran</p>
+                </div>
+                <!-- Kartu Keanggotaan Digital Section -->
+                <div class="membership-card-section p-8">
+                    <h2 class="text-lg md:text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center md:text-left">
+                        <i class="fas fa-id-card"></i> Kartu Keanggotaan Digital
+                    </h2>
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md text-left md:text-center">
+                        <div class="flex justify-center mb-4">
+                            <img src="data:{{$result->getMimeType()}};base64,{{base64_encode($result->getString())}}" alt="QR Code">
+                        </div>
+                        <p class="text-sm md:text-lg text-gray-600 dark:text-white">
+                            <strong>Nama:</strong> {{ $user->name }}
+                        </p>
+                        <p class="text-sm md:text-lg text-gray-600 dark:text-white">
+                            <strong>ID Membership:</strong> {{ $membership ? $membership->id : 'N/A' }}
+                        </p>
+                        <p class="text-sm md:text-lg text-gray-600 dark:text-white">
+                            <strong>Tipe Keanggotaan:</strong> {{ $membershipType ? $membershipType->name : 'N/A' }}
+                        </p>
+                    </div>
                 </div>
                 <!-- User Info Section -->
                 <div class="user-info-section p-8 ">
@@ -21,22 +41,48 @@
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md text-left grid grid-cols-1 md:grid-cols-2 gap-4">
                         @foreach([
                         ['icon' => 'fas fa-user-circle', 'label' => 'Nama Pengguna', 'value' => auth()->user()->name],
-                        ['icon' => 'fas fa-check-circle', 'label' => 'Status Keanggotaan', 'value' => auth()->user()->membership->status],
+                        ['icon' => 'fas fa-check-circle', 'label' => 'Status Keanggotaan', 'value' => optional(auth()->user()->membership)->status],
                         ['icon' => 'fas fa-calendar-alt', 'label' => 'Tanggal Bergabung', 'value' => auth()->user()->created_at->format('d M Y')],
                         ['icon' => 'fas fa-calendar-check', 'label' => 'Jumlah Kehadiran', 'value' => auth()->user()->checkIns()->count()],
-                        ['icon' => 'fas fa-crown', 'label' => 'Paket Keanggotaan', 'value' => auth()->user()->membership->membershipType->name],
-                        ['icon' => 'fas fa-hourglass-half', 'label' => 'Sisa Hari Keanggotaan', 'value' => floor(\Carbon\Carbon::parse(auth()->user()->membership->end_date)->diffInDays(\Carbon\Carbon::now()))],
+                        ['icon' => 'fas fa-crown', 'label' => 'Paket Keanggotaan', 'value' => optional(optional(auth()->user()->membership)->membershipType)->name],
+                        ['icon' => 'fas fa-hourglass-half', 'label' => 'Sisa Hari Keanggotaan', 'value' => floor(\Carbon\Carbon::parse(optional(auth()->user()->membership)->end_date)->diffInDays(\Carbon\Carbon::now()))],
                         ] as $item)
                         <div class="flex justify-between">
                             <p class="text-sm md:text-lg text-gray-600 dark:text-white flex items-center w-1/2">
                                 <i class="{{ $item['icon'] }} mr-2"></i>
                                 <strong>{{ $item['label'] }}</strong>
                             </p>
-                            <p class="text-sm md:text-lg truncate text-gray-600 dark:text-white w-1/2">: {{ $item['value'] }}</p>
+                            <p class="text-sm md:text-lg truncate text-gray-600 dark:text-white w-1/2">:
+                                @if($item['value'])
+                                {{ $item['value'] }}
+                                @else
+                                @switch($item['label'])
+                                @case('Nama Pengguna')
+                                Belum diisi
+                                @break
+                                @case('Status Keanggotaan')
+                                Belum aktif
+                                @break
+                                @case('Tanggal Bergabung')
+                                Belum bergabung
+                                @break
+                                @case('Jumlah Kehadiran')
+                                Belum hadir
+                                @break
+                                @case('Paket Keanggotaan')
+                                Belum memilih paket membership
+                                @break
+                                @case('Sisa Hari Keanggotaan')
+                                Belum ada sisa hari
+                                @break
+                                @endswitch
+                                @endif
+                            </p>
                         </div>
                         @endforeach
                     </div>
                 </div>
+
                 <!-- Statistik Section -->
                 <div class="stats-section p-8">
                     <div class="flex flex-wrap justify-start md:justify-center -mx-4">

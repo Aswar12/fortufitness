@@ -40,6 +40,13 @@ class CheckInResource extends Resource
                     ->label('Metode Check-in')
                     ->required()
                     ->maxLength(255),
+                // Forms\Components\TextInput::make('barcode')
+                //     ->label('Scan Barcode')
+                //     ->hint('Scan barcode using camera to fill this input')
+                //     ->reactive(),
+                // Forms\Components\View::make('filament.custom-components.scan-barcode')
+                //     ->label('Scan Barcode Area')
+                //     ->columnSpan('full'),
             ]);
     }
 
@@ -99,6 +106,24 @@ class CheckInResource extends Resource
             'index' => Pages\ListCheckIns::route('/'),
             'create' => Pages\CreateCheckIn::route('/create'),
             'edit' => Pages\EditCheckIn::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getActions(): array
+    {
+        return [
+            Action::make('scanQR')
+                ->label('Scan QR')
+                ->icon('heroicon-o-qr-code')
+                ->size(ActionSize::Large)
+                ->color('success')
+                ->action(function () {
+                    // Logika untuk menampilkan modal scan QR
+                })
+                ->modalHeading('Scan QR Code Member')
+                ->modalDescription('Silakan scan QR code member untuk melakukan check-in.')
+                ->modalContent(view('filament.resources.checkin-resource.pages.scan-qr-modal'))
+                ->modalSubmitActionLabel('Check-in')
         ];
     }
 }
