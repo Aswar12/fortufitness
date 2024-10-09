@@ -1,11 +1,13 @@
 <?php
 
+use App\Filament\Resources\CheckInResource\Pages\ScanQrModal;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckRole;
 use App\Http\Controllers\UserDashboardController;
+use App\Http\Controllers\CheckInController;
 
 Route::get('/', function () {
     return view('index');
@@ -18,11 +20,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
     Route::get('/keanggotaan', function () {
         return view('keanggotaan');
     });
-
+    Route::post('/resources/check-ins', 'CheckInResource@store');
     Route::get('/transaksi/confirm', [PaymentController::class, 'confirm']);
-
-
     Route::get('/checkin', function () {
         return view('checkin');
     });
+
+    Route::post('/check-ins', [CheckInController::class, 'store'])->middleware('api');
 });

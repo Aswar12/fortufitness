@@ -12,13 +12,14 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\CheckInResource\Pages\ScanQrModal;
 
 class CheckInResource extends Resource
 {
     protected static ?string $model = CheckIn::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    public $showScanQrModal = false;
     public static function form(Form $form): Form
     {
         return $form
@@ -40,13 +41,6 @@ class CheckInResource extends Resource
                     ->label('Metode Check-in')
                     ->required()
                     ->maxLength(255),
-                // Forms\Components\TextInput::make('barcode')
-                //     ->label('Scan Barcode')
-                //     ->hint('Scan barcode using camera to fill this input')
-                //     ->reactive(),
-                // Forms\Components\View::make('filament.custom-components.scan-barcode')
-                //     ->label('Scan Barcode Area')
-                //     ->columnSpan('full'),
             ]);
     }
 
@@ -106,24 +100,26 @@ class CheckInResource extends Resource
             'index' => Pages\ListCheckIns::route('/'),
             'create' => Pages\CreateCheckIn::route('/create'),
             'edit' => Pages\EditCheckIn::route('/{record}/edit'),
+            'scan' => Pages\ScanQr::route('/scan'),
         ];
-    }
+    } // In CheckInResource.php
 
-    public static function getActions(): array
+    // In CheckInResource.php
+
+    public function store(Request $request)
     {
-        return [
-            Action::make('scanQR')
-                ->label('Scan QR')
-                ->icon('heroicon-o-qr-code')
-                ->size(ActionSize::Large)
-                ->color('success')
-                ->action(function () {
-                    // Logika untuk menampilkan modal scan QR
-                })
-                ->modalHeading('Scan QR Code Member')
-                ->modalDescription('Silakan scan QR code member untuk melakukan check-in.')
-                ->modalContent(view('filament.resources.checkin-resource.pages.scan-qr-modal'))
-                ->modalSubmitActionLabel('Check-in')
-        ];
+        $membershipId = $request->input('membership_id');
+        // Retrieve the membership and user information from the database
+        $membership = Membership::find($membershipId);
+        $user = $membership->user;
+        // Create a new check-in record
+        $checkIn = new CheckIn();
+        $checkIn->user_id = $user->id;
+        $checkIn->membership_id = $membershipId;
+        $checkIn->check_in_time = now();
+        $checkIn->save();
+
+        // Return a success response
+        return response()->json(['message' => 'Check-in successful']);
     }
 }
