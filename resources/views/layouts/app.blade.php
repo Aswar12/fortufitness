@@ -30,6 +30,9 @@
     </div>
     @stack('modals')
     @livewireScripts
+    @stack('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="{{ asset('vendor/larapex-charts/apexcharts.js') }}"></script>
 </body>
 
 </html>

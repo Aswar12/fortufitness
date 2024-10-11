@@ -9,6 +9,7 @@ use App\Http\Middleware\CheckRole;
 use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\CheckInController;
 use App\Http\Controllers\MemberCheckInOutController;
+use App\Http\Controllers\MemberController;
 
 Route::get('/', function () {
     return view('index');
@@ -29,4 +30,5 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
 
     Route::post('/member/checkin', [MemberCheckInOutController::class, 'checkin'])->name('member.checkin');
     Route::post('/member/checkout', [MemberCheckInOutController::class, 'checkout'])->name('member.checkout');
+    Route::get('/member/visit-history', [MemberController::class, 'index'])->name('member.visit-history');
 });
