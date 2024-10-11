@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckRole;
 use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\CheckInController;
+use App\Http\Controllers\MemberCheckInOutController;
 
 Route::get('/', function () {
     return view('index');
@@ -26,5 +27,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         return view('checkin');
     });
 
-    Route::post('/check-ins', [CheckInController::class, 'store'])->middleware('api');
+    Route::post('/member/checkin', [MemberCheckInOutController::class, 'checkin'])->name('member.checkin');
+    Route::post('/member/checkout', [MemberCheckInOutController::class, 'checkout'])->name('member.checkout');
 });

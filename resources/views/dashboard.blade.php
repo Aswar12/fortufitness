@@ -6,6 +6,21 @@
     </x-slot>
 
     <div class="py-2 ">
+        @if (session('success'))
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
+        </div>
+        @endif
+
+        @if (session('error'))
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline">{{ session('error') }}</span>
+            </div>
+        </div>
+        @endif
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-gray-900 bg-opacity-10 overflow-hidden shadow-xl sm:rounded-lg">
                 <!-- Hero Section -->
@@ -33,6 +48,44 @@
                         </p>
                     </div>
                 </div>
+                <!-- Check-In/Check-Out Section -->
+                <div class="checkin-checkout-section p-8">
+                    <h2 class="text-lg md:text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center md:text-left">
+                        <i class="fas fa-sign-in-alt"></i> Check-In / Check-Out
+                    </h2>
+                    <div class="p-4 rounded-lg shadow-md text-left md:text-center">
+                        @php
+                        $activeCheckIn = \App\Models\CheckIn::where('user_id', Auth::id())
+                        ->whereNull('check_out_time')
+                        ->first();
+                        @endphp
+
+                        @if ($activeCheckIn)
+                        <div class="bg-white dark:bg-transparent rounded-lg shadow-md p-6 mb-6">
+                            <p class="text-lg md:text-xl text-gray-800 dark:text-white font-semibold mb-2">Status Check-in</p>
+                            <p class="text-sm md:text-base text-gray-600 dark:text-gray-300 mb-4">
+                                Anda sedang check-in sejak:
+                                @php
+                                $checkInTime = $activeCheckIn->check_in_time;
+                                if (is_string($checkInTime)) {
+                                $checkInTime = \Carbon\Carbon::parse($checkInTime);
+                                }
+                                @endphp
+                                <span class="font-medium">{{ $checkInTime->format('H:i') }}</span>
+                                <span class="text-gray-500 dark:text-gray-400">({{ $checkInTime->diffForHumans() }})</span>
+                            </p>
+                            <form action="{{ route('member.checkout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="bg-yellow hover:bg-gray-300 text-white font-bold py-2 px-4 rounded-full shadow-lg transform transition duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50">
+                                    <i class="fas fa-sign-out-alt mr-2"></i> Check Out
+                                </button>
+                            </form>
+                        </div>
+
+                        @endif
+                    </div>
+                </div>
+
                 <!-- User Info Section -->
                 <div class="user-info-section p-8 ">
                     <h2 class="text-lg md:text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center md:text-left">
@@ -95,10 +148,11 @@
                     </div>
                 </div>
                 <!-- Daftar Member Check-In Section -->
+                <!-- Daftar Member Check-In Section -->
                 <div class="checkin-section p-8">
                     <h2 class="text-lg md:text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center md:text-left"><i class="fas fa-user-check"></i> Daftar Member yang Sedang Check-In</h2>
                     <div class="flex flex-wrap justify-center -mx-4 overflow-y-auto h-64">
-                        @foreach(App\Models\CheckIn::where('check_out_time', null)->get() as $checkIn)
+                        @foreach(App\Models\CheckIn::whereNull('check_out_time')->get() as $checkIn)
                         <div class="w-full md:w-1/2 xl:w-1/3 p-4 md:p-6">
                             <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md flex flex-row items-center">
                                 <div class="w-24 h-24 mr-4">
@@ -110,7 +164,17 @@
                                 </div>
                                 <div class="flex-1 flex flex-col">
                                     <h3 class="text-sm md:text-lg font-bold text-gray-800 dark:text-white"><i class="fas fa-user"></i> {{ $checkIn->user->name }}</h3>
-                                    <p class="text-xs md:text-sm text-gray-600 dark:text-gray-100 mt-1"><i class="fas fa-clock"></i> Check-In: {{ \Carbon\Carbon::parse($checkIn->check_in_time)->format('H:i') }} ({{ \Carbon\Carbon::parse($checkIn->check_in_time)->diffForHumans() }})</p>
+                                    <p class="text-xs md:text-sm text-gray-600 dark:text-gray-100 mt-1">
+                                        <i class="fas fa-clock"></i> Check-In:
+                                        @php
+                                        $checkInTime = $checkIn->check_in_time;
+                                        if (is_string($checkInTime)) {
+                                        $checkInTime = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $checkInTime);
+                                        }
+                                        @endphp
+                                        {{ $checkInTime->format('H:i') }}
+                                        ({{ $checkInTime->diffForHumans() }})
+                                    </p>
                                 </div>
                             </div>
                         </div>

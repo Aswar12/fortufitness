@@ -16,7 +16,10 @@ class CheckIn extends Model
         'created_at'
     ];
 
-
+    protected $casts = [
+        'check_in_time' => 'datetime',
+        'check_out_time' => 'datetime',
+    ];
     public function user()
     {
         return $this->belongsTo(User::class);
