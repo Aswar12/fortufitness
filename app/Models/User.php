@@ -64,9 +64,9 @@ class User extends Authenticatable
      */
 
 
-    public function membership()
+    public function memberships()
     {
-        return $this->hasOne(Membership::class);
+        return $this->hasMany(Membership::class);
     }
 
     public function checkIns()

@@ -2,63 +2,80 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Payment;
 use App\Models\Membership;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use thiagoalessio\TesseractOCR\TesseractOCR;
-
 
 class PaymentController extends Controller
 {
-    public function confirm(Request $request)
+    public function uploadProof(Request $request, Payment $payment)
     {
+        $this->authorize('update', $payment);
+
         $request->validate([
             'proof_of_payment' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $proofOfPayment = $request->file('proof_of_payment');
-        $fileName = time() . '.' . $proofOfPayment->getClientOriginalExtension();
-        $proofOfPayment->storeAs('public/proof_of_payment', $fileName);
+        if ($payment->status !== 'pending') {
+            return redirect()->route('memberships.show', $payment->membership_id)
+                ->with('error', 'Pembayaran ini sudah diproses sebelumnya.');
+        }
 
-        $text = $this->extractTextFromImage(storage_path('app/public/proof_of_payment/' . $fileName));
+        try {
+            DB::beginTransaction();
 
-        // Extract important information from text, such as transaction number and amount
-        $transactionNumber = '';
-        $amount = '';
-        foreach (explode("\n", $text) as $line) {
-            if (strpos($line, 'Transaction Number') !== false) {
-                $transactionNumber = trim(str_replace('Transaction Number:', '', $line));
-            } elseif (strpos($line, 'Amount') !== false) {
-                $amount = trim(str_replace('Amount:', '', $line));
+            if ($request->hasFile('proof_of_payment')) {
+                $image = $request->file('proof_of_payment');
+                $imageName = time() . '_' . $payment->id . '.' . $image->getClientOriginalExtension();
+                $imagePath = $image->storeAs('payment_proofs', $imageName, 'public');
+
+                $fullImagePath = Storage::disk('public')->path($imagePath);
+                $text = (new TesseractOCR($fullImagePath))->run();
+
+                $amount = $this->extractAmount($text);
+                $date = $this->extractDate($text);
+
+                $payment->proof_of_payment = $imagePath;
+
+                if ($amount && $date) {
+                    $payment->status = 'review';
+                    $message = 'Bukti pembayaran berhasil diunggah dan sedang menunggu verifikasi admin.';
+                } else {
+                    $payment->status = 'review';
+                    $message = 'Bukti pembayaran diunggah, tetapi memerlukan verifikasi manual oleh admin.';
+                }
+
+                $payment->save();
+
+                DB::commit();
+
+                return redirect()->route('memberships.show', $payment->membership_id)
+                    ->with('success', $message);
             }
+
+            throw new \Exception('File bukti pembayaran tidak ditemukan.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error uploading proof of payment: ' . $e->getMessage());
+            return redirect()->route('memberships.show', $payment->membership_id)
+                ->with('error', 'Terjadi kesalahan saat mengunggah bukti pembayaran. Silakan coba lagi.');
         }
-
-        // Find the corresponding membership
-        $membership = Membership::where('id', $transactionNumber)->first();
-
-        if (!$membership) {
-            return redirect()->back()->with('error', 'Membership not found');
-        }
-
-        // Create new payment
-        $payment = new Payment();
-        $payment->membership_id = $membership->id;
-        $payment->amount = $amount;
-        $payment->payment_date = now();
-        $payment->payment_method = 'Automatic Confirmation';
-        $payment->proof_of_payment = $fileName;
-        $payment->save();
-
-        return redirect()->back()->with('success', 'Payment confirmed successfully');
     }
 
-    private function extractTextFromImage($imagePath)
+    private function extractAmount($text)
     {
-        // OCR implementation to extract text from image
-        // Example using Tesseract OCR library
-        $ocr = new TesseractOCR();
-        $text = $ocr->image($imagePath)->run();
-        return $text;
+        preg_match('/Rp\.?\s?(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})?)/', $text, $matches);
+        return isset($matches[1]) ? str_replace([',', '.'], '', $matches[1]) : null;
+    }
+
+    private function extractDate($text)
+    {
+        preg_match('/(\d{2}[-\/]\d{2}[-\/]\d{4})/', $text, $matches);
+        return isset($matches[1]) ? $matches[1] : null;
     }
 }

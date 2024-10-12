@@ -10,18 +10,33 @@ class CheckInController extends Controller
 {
     public function store(Request $request)
     {
-        $membershipId = $request->input('membership_id');
-        // Retrieve the membership and user information from the database
-        $membership = Membership::find($membershipId);
-        $user = $membership->user;
-        // Create a new check-in record
-        $checkIn = new CheckIn();
-        $checkIn->user_id = $user->id;
-        $checkIn->check_in_time = now();
-        $checkIn->check_in_method = 'Scan QR Code';
-        $checkIn->save();
+        $request->validate([
+            'membership_id' => 'required|exists:memberships,id',
+        ]);
 
-        // Return a success response
-        return response()->json(['message' => 'Check-in successful']);
+        $membershipId = $request->input('membership_id');
+        $membership = Membership::findOrFail($membershipId);
+        $user = $membership->user;
+
+        // Authorization check
+        if (!$user->can('check-in')) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        try {
+            $checkIn = CheckIn::create([
+                'user_id' => $user->id,
+                'check_in_time' => now(),
+                'check_in_method' => 'Scan QR Code',
+            ]);
+
+            // Logging
+            \Log::info("User {$user->id} checked in at " . $checkIn->check_in_time);
+
+            return response()->json(['message' => 'Check-in successful']);
+        } catch (\Exception $e) {
+            \Log::error("Check-in failed for user {$user->id}: " . $e->getMessage());
+            return response()->json(['message' => 'Check-in failed'], 500);
+        }
     }
 }

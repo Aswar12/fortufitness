@@ -37,7 +37,7 @@ class CheckinWeeksChart
         return $this->chart->lineChart()
             ->setTitle('Kunjungan per Minggu')
             ->setSubtitle('Bulan ini')
-            ->addData('Kunjungan', $chartData)
+            ->addData('Kunjungan', $chartData)->setGrid('#3F51B5', 0.1)
             ->setXAxis($chartLabels);
     }
 }

@@ -29,23 +29,30 @@
                     <p class="text-sm md:text-lg text-gray-600 dark:text-gray-100">Temukan Potensi Anda dalam Kebugaran</p>
                 </div>
                 <!-- Kartu Keanggotaan Digital Section -->
+                <!-- Kartu Keanggotaan Digital Section -->
                 <div class="membership-card-section p-8">
                     <h2 class="text-lg md:text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center md:text-left">
                         <i class="fas fa-id-card"></i> Kartu Keanggotaan Digital
                     </h2>
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md text-left md:text-center">
+                        @if($membership && $qrCodeImage)
                         <div class="flex justify-center mb-4">
-                            <img src="data:{{$result->getMimeType()}};base64,{{base64_encode($result->getString())}}" alt="QR Code">
+                            <img src="{{ $qrCodeImage }}" alt="QR Code">
                         </div>
                         <p class="text-sm md:text-lg text-gray-600 dark:text-white">
                             <strong>Nama:</strong> {{ $user->name }}
                         </p>
                         <p class="text-sm md:text-lg text-gray-600 dark:text-white">
-                            <strong>ID Membership:</strong> {{ $membership ? $membership->id : 'N/A' }}
+                            <strong>ID Membership:</strong> {{ $membership->id }}
                         </p>
                         <p class="text-sm md:text-lg text-gray-600 dark:text-white">
                             <strong>Tipe Keanggotaan:</strong> {{ $membershipType ? $membershipType->name : 'N/A' }}
                         </p>
+                        @else
+                        <p class="text-sm md:text-lg text-gray-600 dark:text-white">
+                            Anda belum memiliki keanggotaan aktif. Silakan pilih paket keanggotaan untuk mengaktifkan kartu keanggotaan digital Anda.
+                        </p>
+                        @endif
                     </div>
                 </div>
                 <!-- Check-In/Check-Out Section -->
@@ -137,7 +144,7 @@
                 </div>
 
                 <!-- Statistik Section -->
-                <div class="stats-section p-8">
+                <!-- <div class="stats-section p-8">
                     <div class="flex flex-wrap justify-start md:justify-center -mx-4">
                         <div class="w-full md:w-1/2 xl:w-1/3 p-4 order-1">
                             <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md text-left md:text-center">
@@ -145,6 +152,66 @@
                                 <p class="text-sm md:text-lg text-gray-600 dark:text-gray-100">{{ App\Models\User::count() }}</p>
                             </div>
                         </div>
+                    </div>
+                </div> -->
+                <!-- Kalender Keanggotaan Section -->
+                <div class="membership-calendar-section p-8">
+                    <h2 class="text-lg md:text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center md:text-left">
+                        <i class="fas fa-calendar-alt"></i> Kalender Keanggotaan
+                    </h2>
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                        @php
+                        $startDate = optional(auth()->user()->membership)->start_date ? \Carbon\Carbon::parse(auth()->user()->membership->start_date) : null;
+                        $endDate = optional(auth()->user()->membership)->end_date ? \Carbon\Carbon::parse(auth()->user()->membership->end_date) : null;
+                        $today = \Carbon\Carbon::now();
+                        $totalDays = $startDate && $endDate ? $startDate->diffInDays($endDate) : 0;
+                        $remainingDays = $endDate ? ceil($today->diffInDays($endDate, false)) : 0;
+
+                        // Ambil data check-in member
+                        $checkIns = auth()->user()->checkIns()
+                        ->whereBetween('check_in_time', [$startDate, $endDate])
+                        ->pluck('check_in_time')
+                        ->map(function($date) {
+                        return $date->format('Y-m-d');
+                        })
+                        ->toArray();
+                        @endphp
+
+                        @if($startDate && $endDate)
+                        <div class="flex flex-wrap justify-center">
+                            @for($i = 0; $i < $totalDays; $i++)
+                                @php
+                                $currentDate=$startDate->copy()->addDays($i);
+                                $isPast = $currentDate->isPast();
+                                $isToday = $currentDate->isToday();
+                                $hasCheckedIn = in_array($currentDate->format('Y-m-d'), $checkIns);
+                                @endphp
+                                <div class="w-8 h-8 m-1 rounded-full flex items-center justify-center text-xs
+                        @if($hasCheckedIn)
+                            bg-yellow dark:bg-yellow
+                        @elseif($isPast)
+                            bg-gray-200 dark:bg-gray-600
+                        @else
+                            bg-gray-800 dark:bg-gray-400
+                        @endif
+                        ">
+                                    {{ $currentDate->format('d') }}
+                                </div>
+                                @endfor
+                        </div>
+                        <div class="mt-4 text-center">
+                            <p class="text-sm md:text-base text-gray-600 dark:text-white">
+                                Sisa masa keanggotaan: <span class="font-bold">{{ $remainingDays }} hari</span>
+                            </p>
+                            <p class="text-xs md:text-sm text-gray-500 dark:text-gray-300 mt-2">
+                                Mulai: {{ $startDate->format('d M Y') }} | Berakhir: {{ $endDate->format('d M Y') }}
+                            </p>
+                        </div>
+                        @else
+                        <p class="text-sm md:text-base text-gray-600 dark:text-white text-center">
+                            Anda belum memiliki keanggotaan aktif.
+                        </p>
+                        @endif
                     </div>
                 </div>
                 <!-- Daftar Member Check-In Section -->
@@ -214,5 +281,6 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </x-app-layout>

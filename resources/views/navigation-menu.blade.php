@@ -18,6 +18,9 @@
                     <x-nav-link href="{{ route('member.visit-history') }}" :active="request()->routeIs('member.visit-history')">
                         {{ __('Riwayat Kunjungan') }}
                     </x-nav-link>
+                    <x-nav-link href="{{ route('memberships.index') }}" :active="request()->routeIs('memberships.index')">
+                        {{ __('Jenis Keanggotaan') }}
+                    </x-nav-link>
                     <!-- Tambahkan link navigasi lainnya di sini -->
                 </div>
             </div>
@@ -101,6 +104,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('member.visit-history') }}" :active="request()->routeIs('member.visit-history')">
                 {{ __('Riwayat Kunjungan') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('memberships.index') }}" :active="request()->routeIs('memberships.index')">
+                {{ __('Jenis Keanggotaan') }}
             </x-responsive-nav-link>
             <!-- Tambahkan link navigasi responsif lainnya di sini -->
         </div>

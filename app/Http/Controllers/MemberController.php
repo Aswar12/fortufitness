@@ -5,28 +5,35 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\CheckIn;
 use Illuminate\Support\Carbon;
-use ArielMejiaDev\LarapexCharts\LarapexChart;
 use App\Charts\CheckinWeeksChart;
+use Illuminate\Support\Facades\Cache;
 
 class MemberController extends Controller
 {
     public function index(CheckinWeeksChart $chart)
     {
-        $user = auth()->user();
-        $visits = CheckIn::where('user_id', $user->id)
-            ->orderBy('check_in_time', 'desc')
-            ->paginate(10);
+        try {
+            $user = auth()->user();
+            $visits = CheckIn::where('user_id', $user->id)
+                ->orderBy('check_in_time', 'desc')
+                ->paginate(10);
 
-        $totalVisits = $visits->total();
-        $averageDuration = $this->calculateAverageDuration($visits);
-        $frequencyPerWeek = $this->calculateFrequencyPerWeek($visits);
-        $visitsThisMonth = CheckIn::where('user_id', $user->id)
-            ->whereMonth('check_in_time', Carbon::now()->month)
-            ->count();
+            $cacheKey = "user_{$user->id}_stats";
+            $stats = Cache::remember($cacheKey, now()->addHours(1), function () use ($user, $visits) {
+                return [
+                    'totalVisits' => $visits->total(),
+                    'averageDuration' => $this->calculateAverageDuration($visits),
+                    'visitsThisMonth' => $this->getVisitsThisMonth($user->id),
+                ];
+            });
 
-        $checkinChart = $chart->build();
+            $checkinChart = $chart->build();
 
-        return view('visit-history', compact('visits', 'totalVisits', 'averageDuration', 'frequencyPerWeek', 'visitsThisMonth', 'checkinChart'));
+            return view('visit-history', array_merge(compact('visits', 'checkinChart'), $stats));
+        } catch (\Exception $e) {
+            \Log::error('Error in MemberController@index: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memuat data.');
+        }
     }
 
     private function calculateAverageDuration($visits)
@@ -39,26 +46,21 @@ class MemberController extends Controller
                 $checkInTime = Carbon::parse($visit->check_in_time);
                 $checkOutTime = Carbon::parse($visit->check_out_time);
 
-                // Pastikan check_out_time selalu lebih besar dari check_in_time
                 if ($checkOutTime->gt($checkInTime)) {
-                    $duration =  abs($checkOutTime->diffInMinutes($checkInTime));
+                    $duration = $checkOutTime->diffInMinutes($checkInTime);
                     $totalDuration += $duration;
                     $count++;
                 }
             }
         }
 
-        // Mengembalikan rata-rata durasi dalam menit, dibulatkan ke bilangan bulat terdekat
         return $count > 0 ? round($totalDuration / $count) : 0;
     }
 
-    private function calculateFrequencyPerWeek($visits)
+    private function getVisitsThisMonth($userId)
     {
-        if ($visits->isEmpty()) {
-            return 0;
-        }
-        $firstVisit = $visits->sortBy('check_in_time')->first();
-        $weekCount = Carbon::parse($firstVisit->check_in_time)->diffInWeeks(Carbon::now()) + 1;
-        return $weekCount > 0 ? round($visits->total() / $weekCount, 2) : 0;
+        return CheckIn::where('user_id', $userId)
+            ->whereMonth('check_in_time', Carbon::now()->month)
+            ->count();
     }
 }

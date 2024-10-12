@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Payment extends Model
 {
+    protected $casts = [
+        'status' => 'string',
+    ];
     use HasFactory;
     protected $fillable = [
         'user_id',
@@ -27,8 +30,13 @@ class Payment extends Model
     {
         return $this->belongsTo(Membership::class);
     }
-    public function payments()
+    public function approve()
     {
-        return $this->hasMany(Payment::class);
+        $this->update(['status' => 'approved']);
+    }
+
+    public function reject()
+    {
+        $this->update(['status' => 'rejected']);
     }
 }

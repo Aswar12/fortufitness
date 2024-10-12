@@ -37,6 +37,7 @@ membership_type_id (foreign key)
 start_date
 end_date
 status
+cancelled_at
 Relasi:
 
 Dimiliki oleh satu User (one-to-one)
@@ -75,6 +76,7 @@ status
 Relasi:
 
 Dilakukan oleh satu Membership (many-to-one)
+
 Tabel ApiTokens
 
 id (primary key)

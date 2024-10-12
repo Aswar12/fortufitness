@@ -37,6 +37,7 @@ class RegisterController extends Controller
             'phone_number' => $request->phone_number,
             'address' => $request->address,
             'emergency_contact' => $request->emergency_contact,
+            'role' => 'member'
         ]);
 
         auth()->login($user);
