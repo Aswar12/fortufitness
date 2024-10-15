@@ -1,5 +1,3 @@
-Berikut adalah struktur database yang telah diperbarui dengan relasi antar tabel:
-
 Tabel Users
 
 id (primary key)
@@ -14,7 +12,6 @@ address
 emergency_contact
 device_token
 Relasi:
-
 Memiliki satu Membership (one-to-one)
 Memiliki banyak Payment (one-to-many)
 Memiliki banyak Expense (one-to-many)
@@ -27,7 +24,6 @@ duration
 price
 description
 Relasi:
-
 Dimiliki oleh satu Membership (one-to-one)
 Tabel Memberships
 
@@ -36,10 +32,9 @@ user_id (foreign key)
 membership_type_id (foreign key)
 start_date
 end_date
-status
+status (active, pending, cancelled, expired)
 cancelled_at
 Relasi:
-
 Dimiliki oleh satu User (one-to-one)
 Dimiliki oleh satu MembershipType (one-to-one)
 Melakukan banyak Payment (one-to-many)
@@ -51,7 +46,6 @@ check_in_time
 check_out_time
 check_in_method
 Relasi:
-
 Dimiliki oleh satu User (one-to-one)
 Tabel Expenses
 
@@ -62,7 +56,6 @@ date
 category
 user_id (foreign key)
 Relasi:
-
 Dimiliki oleh satu User (one-to-one)
 Tabel Payments
 
@@ -72,17 +65,13 @@ amount
 payment_date
 payment_method
 proof_of_payment
-status
+status (pending, completed, failed, refunded)
 Relasi:
-
 Dilakukan oleh satu Membership (many-to-one)
-
 Tabel ApiTokens
 
 id (primary key)
 user_id (foreign key)
 token
 Relasi:
-
 Dimiliki oleh satu User (one-to-one)
-Dengan demikian, struktur database telah diperbarui dengan relasi antar tabel yang sesuai.

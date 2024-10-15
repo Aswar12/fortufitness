@@ -1,3 +1,4 @@
+<!-- resources/views/payments/process.blade.php -->
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -13,6 +14,7 @@
                 <p>Tanggal Pembayaran: {{ $payment->payment_date }}</p>
                 <p>Metode Pembayaran: {{ $payment->payment_method }}</p>
                 <p>Status: {{ ucfirst($payment->status) }}</p>
+
                 <form action="{{ route('payments.uploadProof', $payment->id) }}" method="POST" enctype="multipart/form-data" class="mt-4">
                     @csrf
                     <div class="mb-4">
@@ -22,8 +24,8 @@
                             onchange="previewImage(event)">
                         <img id="preview" src="#" alt="Preview" style="display: none; max-width: 300px; margin-top: 10px;">
                     </div>
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-                        Upload Bukti Transfer
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full shadow-lg transform transition duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50">
+                        <i class="fas fa-upload mr-2"></i> Upload Bukti Pembayaran
                     </button>
                 </form>
             </div>

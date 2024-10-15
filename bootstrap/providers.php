@@ -6,4 +6,5 @@ return [
     App\Providers\Filament\PanelProvider::class,
     App\Providers\FortifyServiceProvider::class,
     App\Providers\JetstreamServiceProvider::class,
+    App\Providers\TesseractServiceProvider::class,
 ];
