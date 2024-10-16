@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use thiagoalessio\TesseractOCR\TesseractOCR;
 use App\Models\BankAccount;
+use DateTime;
 
 class PaymentController extends Controller
 {
@@ -99,7 +100,6 @@ class PaymentController extends Controller
     }
 
 
-
     private function verifyPayment($ocrText, $payment)
     {
         if (!$ocrText) {
@@ -108,14 +108,15 @@ class PaymentController extends Controller
         }
 
         $expectedAmount = $payment->amount;
+        $expectedDate = $payment->payment_date; // assume this is the expected payment date
 
-        // Ubah teks OCR menjadi huruf kecil untuk memudahkan pencocokan
+        // Convert OCR text to lowercase for easier matching
         $lowerOcrText = strtolower($ocrText);
 
-        // Dapatkan semua rekening bank yang aktif
+        // Get all active bank accounts
         $validBankAccounts = BankAccount::where('is_active', true)->get();
 
-        // Cek apakah ada rekening bank yang cocok dalam teks OCR
+        // Check for matching bank account in OCR text
         $accountFound = false;
         foreach ($validBankAccounts as $account) {
             if (
@@ -128,8 +129,7 @@ class PaymentController extends Controller
             }
         }
 
-        // Cek apakah jumlah transfer ada dalam teks OCR
-        // Ubah format jumlah untuk mencoba beberapa kemungkinan
+        // Check if the transfer amount is present in the OCR text
         $amountVariations = [
             'rp' . $expectedAmount,
             'rp ' . $expectedAmount,
@@ -148,11 +148,58 @@ class PaymentController extends Controller
         }
         Log::info('Amount found: ' . ($amountFound ? 'Yes' : 'No'));
 
-        // Log the full OCR text for debugging
-        Log::info('Full OCR Text: ' . $lowerOcrText);
+        // Extract the date and time from the OCR text
+        $dateRegex = '/\b(\d{1,2} [a-zA-Z]+ \d{4}, \d{2}:\d{2} wib)\b/'; // Regex to match the date format
+        preg_match($dateRegex, $lowerOcrText, $dateMatches);
+        $extractedDate = $dateMatches[1] ?? null;
+        $extractedDate = str_replace(' wib', '', $extractedDate);
+        $monthNames = array('januari', 'februari', 'maret', 'april', 'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember');
+        $monthValues = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12');
 
-        // Verifikasi berhasil jika rekening bank valid dan jumlah transfer ditemukan
-        $result = $accountFound && $amountFound;
+        $extractedDate = strtolower($extractedDate); // convert to lowercase for case-insensitive replacement
+
+        foreach ($monthNames as $key => $monthName) {
+            $extractedDate = str_replace($monthName, $monthValues[$key], $extractedDate);
+        }
+        // Create a DateTime object from the created_at date
+        try {
+            $createdAtDateObject = new DateTime($payment->created_at);
+        } catch (Exception $e) {
+            Log::info('Error creating DateTime object: ' . $e->getMessage());
+            return false; // Handle the error as needed
+        }
+
+        // Check if the extracted date is valid
+        if ($extractedDate) {
+            // Create a DateTime object from the extracted date
+            $extractedDateObject = DateTime::createFromFormat('d m Y, H:i', $extractedDate);
+
+            if (!$extractedDateObject) {
+                Log::info('Invalid extracted date format: ' . $extractedDate);
+                $dateFound = false;
+            } else {
+                // Format the extracted date to match the created_at format
+                $formattedExtractedDate = $extractedDateObject->format('Y-m-d H:i:s');
+                Log::info('Formatted extracted date: ' . $formattedExtractedDate);
+
+                // Now you can compare this formatted date with the created_at date
+                try {
+                    $createdAtDateObject = new DateTime($payment->created_at);
+                } catch (Exception $e) {
+                    Log::info('Error creating DateTime object: ' . $e->getMessage());
+                    return false; // Handle the error as needed
+                }
+                // Compare the two DateTime objects
+                $dateFound = $createdAtDateObject->diff($extractedDateObject)->h <= 4; // Check if within 4 hours
+                Log::info('Date found: ' . ($dateFound ? 'Yes' : 'No'));
+            }
+        } else {
+            $dateFound = false;
+            Log::info('No date found in OCR text.');
+        }
+
+        // Verification is successful if a valid bank account, transfer amount, and matching date are found
+        $result = $accountFound && $amountFound && $dateFound;
         Log::info('Verification result: ' . ($result ? 'Success' : 'Failed'));
 
         return $result;
