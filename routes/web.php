@@ -8,14 +8,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckRole;
 use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\CheckInController;
+use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\MemberCheckInOutController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MembershipController;
 
 // Halaman utama
-Route::get('/', function () {
-    return view('index');
-});
+Route::get('/', [LandingPageController::class, 'index'])->name('landing');
 
 // Rute untuk pendaftaran pengguna baru
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
