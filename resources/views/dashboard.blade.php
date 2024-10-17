@@ -11,8 +11,7 @@
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
                 <span class="block sm:inline">{{ session('success') }}</span>
             </div>
-        </div>
-        @endif
+        </div> @endif
 
         @if (session('error'))
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
@@ -21,32 +20,33 @@
             </div>
         </div>
         @endif
+
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-gray-900 bg-opacity-10 overflow-hidden shadow-xl sm:rounded-lg">
                 <!-- Hero Section -->
                 <div class="hero-section ml-6 p-2 text-center md:text-left">
-                    <h1 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white"> Selamat Datang di FortuFitness</h1>
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">Selamat Datang di FortuFitness</h1>
                     <p class="text-sm md:text-lg text-gray-600 dark:text-gray-100">Temukan Potensi Anda dalam Kebugaran</p>
                 </div>
-                <!-- Kartu Keanggotaan Digital Section -->
+
                 <!-- Kartu Keanggotaan Digital Section -->
                 <div class="membership-card-section p-8">
                     <h2 class="text-lg md:text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center md:text-left">
                         <i class="fas fa-id-card"></i> Kartu Keanggotaan Digital
                     </h2>
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md text-left md:text-center">
-                        @if($membership && $qrCodeImage)
+                        @if($currentMembership && $qrCodeImage)
                         <div class="flex justify-center mb-4">
                             <img src="{{ $qrCodeImage }}" alt="QR Code">
                         </div>
                         <p class="text-sm md:text-lg text-gray-600 dark:text-white">
-                            <strong>Nama:</strong> {{ $user->name }}
+                            <strong>Nama:</strong> {{ $currentUser ->name }}
                         </p>
                         <p class="text-sm md:text-lg text-gray-600 dark:text-white">
-                            <strong>ID Membership:</strong> {{ $membership->id }}
+                            <strong>ID Membership:</strong> {{ $currentMembership->id }}
                         </p>
                         <p class="text-sm md:text-lg text-gray-600 dark:text-white">
-                            <strong>Tipe Keanggotaan:</strong> {{ $membershipType ? $membershipType->name : 'N/A' }}
+                            <strong>Tipe Keanggotaan:</strong> {{ $currentMembership->membershipType->name ?? 'N/A' }}
                         </p>
                         @else
                         <p class="text-sm md:text-lg text-gray-600 dark:text-white">
@@ -55,6 +55,7 @@
                         @endif
                     </div>
                 </div>
+
                 <!-- Check-In/Check-Out Section -->
                 <div class="checkin-checkout-section p-8">
                     <h2 class="text-lg md:text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center md:text-left">
@@ -73,10 +74,7 @@
                             <p class="text-sm md:text-base text-gray-600 dark:text-gray-300 mb-4">
                                 Anda sedang check-in sejak:
                                 @php
-                                $checkInTime = $activeCheckIn->check_in_time;
-                                if (is_string($checkInTime)) {
-                                $checkInTime = \Carbon\Carbon::parse($checkInTime);
-                                }
+                                $checkInTime = \Carbon\Carbon::parse($activeCheckIn->check_in_time);
                                 @endphp
                                 <span class="font-medium">{{ $checkInTime->format('H:i') }}</span>
                                 <span class="text-gray-500 dark:text-gray-400">({{ $checkInTime->diffForHumans() }})</span>
@@ -100,12 +98,12 @@
                     </h2>
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md text-left grid grid-cols-1 md:grid-cols-2 gap-4">
                         @foreach([
-                        ['icon' => 'fas fa-user-circle', 'label' => 'Nama Pengguna', 'value' => auth()->user()->name],
-                        ['icon' => 'fas fa-check-circle', 'label' => 'Status Keanggotaan', 'value' => optional(auth()->user()->membership)->status],
-                        ['icon' => 'fas fa-calendar-alt', 'label' => 'Tanggal Bergabung', 'value' => auth()->user()->created_at->format('d M Y')],
-                        ['icon' => 'fas fa-calendar-check', 'label' => 'Jumlah Kehadiran', 'value' => auth()->user()->checkIns()->count()],
-                        ['icon' => 'fas fa-crown', 'label' => 'Paket Keanggotaan', 'value' => optional(optional(auth()->user()->membership)->membershipType)->name],
-                        ['icon' => 'fas fa-hourglass-half', 'label' => 'Sisa Hari Keanggotaan', 'value' => floor(\Carbon\Carbon::parse(optional(auth()->user()->membership)->end_date)->diffInDays(\Carbon\Carbon::now()))],
+                        ['icon' => 'fas fa-user-circle', 'label' => 'Nama Pengguna', 'value' => $currentUser->name],
+                        ['icon' => 'fas fa-check-circle', 'label' => 'Status Keanggotaan', 'value' => $currentMembership->status ?? 'Belum Aktif'],
+                        ['icon' => 'fas fa-calendar-alt', 'label' => 'Tanggal Bergabung', 'value' => $currentUser->created_at->format('d M Y')],
+                        ['icon' => 'fas fa-calendar-check', 'label' => 'Jumlah Kehadiran', 'value' => $currentUser->checkIns()->count()],
+                        ['icon' => 'fas fa-crown', 'label' => 'Paket Keanggotaan', 'value' => $currentMembership->membershipType->name ?? 'Belum Memilih Paket'],
+                        ['icon' => 'fas fa-hourglass-half', 'label' => 'Sisa Hari Keanggotaan', 'value' => $currentMembership->end_date ? ceil(\Carbon\Carbon::parse($currentMembership->end_date)->diffInDays(\Carbon\Carbon::now(), false)) : 'Belum Ada Sisa Hari'],
                         ] as $item)
                         <div class="flex justify-between">
                             <p class="text-sm md:text-lg text-gray-600 dark:text-white flex items-center w-1/2">
@@ -113,30 +111,7 @@
                                 <strong>{{ $item['label'] }}</strong>
                             </p>
                             <p class="text-sm md:text-lg truncate text-gray-600 dark:text-white w-1/2">:
-                                @if($item['value'])
                                 {{ $item['value'] }}
-                                @else
-                                @switch($item['label'])
-                                @case('Nama Pengguna')
-                                Belum diisi
-                                @break
-                                @case('Status Keanggotaan')
-                                Belum aktif
-                                @break
-                                @case('Tanggal Bergabung')
-                                Belum bergabung
-                                @break
-                                @case('Jumlah Kehadiran')
-                                Belum hadir
-                                @break
-                                @case('Paket Keanggotaan')
-                                Belum memilih paket membership
-                                @break
-                                @case('Sisa Hari Keanggotaan')
-                                Belum ada sisa hari
-                                @break
-                                @endswitch
-                                @endif
                             </p>
                         </div>
                         @endforeach
@@ -154,6 +129,7 @@
                         </div>
                     </div>
                 </div> -->
+
                 <!-- Kalender Keanggotaan Section -->
                 <div class="membership-calendar-section p-8">
                     <h2 class="text-lg md:text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center md:text-left">
@@ -161,14 +137,14 @@
                     </h2>
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                         @php
-                        $startDate = optional(auth()->user()->membership)->start_date ? \Carbon\Carbon::parse(auth()->user()->membership->start_date) : null;
-                        $endDate = optional(auth()->user()->membership)->end_date ? \Carbon\Carbon::parse(auth()->user()->membership->end_date) : null;
+                        $startDate = $currentMembership->start_date ? \Carbon\Carbon::parse($currentMembership->start_date) : null;
+                        $endDate = $currentMembership->end_date ? \Carbon\Carbon::parse($currentMembership->end_date) : null;
                         $today = \Carbon\Carbon::now();
                         $totalDays = $startDate && $endDate ? $startDate->diffInDays($endDate) : 0;
                         $remainingDays = $endDate ? ceil($today->diffInDays($endDate, false)) : 0;
 
                         // Ambil data check-in member
-                        $checkIns = auth()->user()->checkIns()
+                        $checkIns = $currentUser->checkIns()
                         ->whereBetween('check_in_time', [$startDate, $endDate])
                         ->pluck('check_in_time')
                         ->map(function($date) {
@@ -214,7 +190,7 @@
                         @endif
                     </div>
                 </div>
-                <!-- Daftar Member Check-In Section -->
+
                 <!-- Daftar Member Check-In Section -->
                 <div class="checkin-section p-8">
                     <h2 class="text-lg md:text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center md:text-left"><i class="fas fa-user-check"></i> Daftar Member yang Sedang Check-In</h2>
@@ -234,10 +210,7 @@
                                     <p class="text-xs md:text-sm text-gray-600 dark:text-gray-100 mt-1">
                                         <i class="fas fa-clock"></i> Check-In:
                                         @php
-                                        $checkInTime = $checkIn->check_in_time;
-                                        if (is_string($checkInTime)) {
-                                        $checkInTime = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $checkInTime);
-                                        }
+                                        $checkInTime = \Carbon\Carbon::parse($checkIn->check_in_time);
                                         @endphp
                                         {{ $checkInTime->format('H:i') }}
                                         ({{ $checkInTime->diffForHumans() }})
@@ -248,39 +221,7 @@
                         @endforeach
                     </div>
                 </div>
-                <!-- Fitur Utama Section -->
-                <div class="features-section p-8">
-                    <h2 class="text-lg md:text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center md:text-left"><i class="fas fa-star"></i> Fitur Utama</h2>
-                    <div class="flex flex-wrap justify-start md:justify-center -mx-4">
-                        <div class="w-full md:w-1/2 xl:w-1/3 p-4">
-                            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md text-left md:text-center">
-                                <h3 class="text-sm md:text-xl font-bold text-gray-800 dark:text-white"><i class="fas fa-users-cog"></i> Manajemen Anggota</h3>
-                            </div>
-                        </div>
-                        <div class="w-full md:w-1/2 xl:w-1/3 p-4">
-                            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md text-left md:text-center">
-                                <h3 class="text-sm md:text-xl font-bold text-gray-800 dark:text-white"><i class="fas fa-id-card"></i> Manajemen Keanggotaan</h3>
-                            </div>
-                        </div>
-                        <div class="w-full md:w-1/2 xl:w-1/3 p-4">
-                            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md text-left md:text-center">
-                                <h3 class="text-sm md:text-xl font-bold text-gray-800 dark:text-white"><i class="fas fa-running"></i> Manajemen Latihan</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Informasi Terbaru Section -->
-                <div class="latest-info-section p-8">
-                    <h2 class="text-lg md:text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center md:text-left"> Informasi Terbaru</h2>
-                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md mb-4 text-left md:text-center">
-                        <h3 class="text-sm md:text-xl font-bold text-gray-800 dark:text-white"><i class="fas fa-credit-card"></i> Update Fitur Baru: Manajemen Pembayaran</h3>
-                    </div>
-                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md text-left md:text-center">
-                        <h3 class="text-sm md:text-xl font-bold text-gray-800 dark:text-white"><i class="fas fa-tags"></i> Promo Spesial: Diskon 10% untuk Anggota Baru</h3>
-                    </div>
-                </div>
             </div>
         </div>
-    </div>
     </div>
 </x-app-layout>
