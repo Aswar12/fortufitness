@@ -13,7 +13,10 @@ return [
     | This will allow your users to receive real-time notifications.
     |
     */
-
+    'providers' => [
+        // ...
+        App\Providers\FilamentServiceProvider::class,
+    ],
     'broadcasting' => [
 
         // 'echo' => [
@@ -89,4 +92,5 @@ return [
         'label' => 'Fortu Fitness',
         'icon' => 'heroicon-o-document-text',
     ],
+
 ];

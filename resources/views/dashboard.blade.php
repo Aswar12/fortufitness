@@ -103,7 +103,7 @@
                         ['icon' => 'fas fa-calendar-alt', 'label' => 'Tanggal Bergabung', 'value' => $currentUser->created_at->format('d M Y')],
                         ['icon' => 'fas fa-calendar-check', 'label' => 'Jumlah Kehadiran', 'value' => $currentUser->checkIns()->count()],
                         ['icon' => 'fas fa-crown', 'label' => 'Paket Keanggotaan', 'value' => $currentMembership->membershipType->name ?? 'Belum Memilih Paket'],
-                        ['icon' => 'fas fa-hourglass-half', 'label' => 'Sisa Hari Keanggotaan', 'value' => $currentMembership->end_date ? ceil(\Carbon\Carbon::parse($currentMembership->end_date)->diffInDays(\Carbon\Carbon::now(), false)) : 'Belum Ada Sisa Hari'],
+                        ['icon' => 'fas fa-hourglass-half', 'label' => 'Sisa Hari Keanggotaan', 'value' => $currentMembership && $currentMembership->end_date ? ceil(\Carbon\Carbon::parse($currentMembership->end_date)->diffInDays(\Carbon\Carbon::now(), false)) : 'Belum Ada Sisa Hari'],
                         ] as $item)
                         <div class="flex justify-between">
                             <p class="text-sm md:text-lg text-gray-600 dark:text-white flex items-center w-1/2">
@@ -136,6 +136,7 @@
                         <i class="fas fa-calendar-alt"></i> Kalender Keanggotaan
                     </h2>
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                        @if($currentMembership)
                         @php
                         $startDate = $currentMembership->start_date ? \Carbon\Carbon::parse($currentMembership->start_date) : null;
                         $endDate = $currentMembership->end_date ? \Carbon\Carbon::parse($currentMembership->end_date) : null;
@@ -163,13 +164,13 @@
                                 $hasCheckedIn = in_array($currentDate->format('Y-m-d'), $checkIns);
                                 @endphp
                                 <div class="w-8 h-8 m-1 rounded-full flex items-center justify-center text-xs
-                        @if($hasCheckedIn)
-                            bg-yellow dark:bg-yellow
-                        @elseif($isPast)
-                            bg-gray-200 dark:bg-gray-600
-                        @else
-                            bg-gray-800 dark:bg-gray-400
-                        @endif
+                            @if($hasCheckedIn)
+                                bg-yellow dark:bg-yellow
+                            @elseif($isPast)
+                                bg-gray-200 dark:bg-gray-600
+                            @else
+                                bg-gray-800 dark:bg-gray-400
+                            @endif
                         ">
                                     {{ $currentDate->format('d') }}
                                 </div>
@@ -183,6 +184,11 @@
                                 Mulai: {{ $startDate->format('d M Y') }} | Berakhir: {{ $endDate->format('d M Y') }}
                             </p>
                         </div>
+                        @else
+                        <p class="text-sm md:text-base text-gray-600 dark:text-white text-center">
+                            Data keanggotaan tidak lengkap.
+                        </p>
+                        @endif
                         @else
                         <p class="text-sm md:text-base text-gray-600 dark:text-white text-center">
                             Anda belum memiliki keanggotaan aktif.

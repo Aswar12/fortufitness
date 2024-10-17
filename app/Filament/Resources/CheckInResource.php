@@ -18,7 +18,7 @@ class CheckInResource extends Resource
 {
     protected static ?string $model = CheckIn::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard';
     public $showScanQrModal = false;
     public static function form(Form $form): Form
     {
