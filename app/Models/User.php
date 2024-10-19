@@ -85,10 +85,7 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    public function activeMembership()
-    {
-        return Membership::active()->orderBy('end_date', 'desc')->first();
-    }
+
     public function isAdmin()
     {
         return $this->role === 'admin';

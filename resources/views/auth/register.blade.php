@@ -1,71 +1,87 @@
+<x-guest-layout>
+    <x-authentication-card>
+        <x-slot name="logo">
+            <x-authentication-card-logo />
+        </x-slot>
 
-@extends('layouts.app')
+        <x-validation-errors class="mb-4" />
 
-@section('content')
-<div class="container mx-auto">
-    <h1 class="text-2xl font-bold mb-6">Register</h1>
-    <form action="{{ route('register') }}" method="POST" class="bg-white p-6 rounded-lg shadow-md">
-        @csrf
-        <div class="mb-4">
-            <label for="name" class="block text-gray-700">Name</label>
-            <input type="text" name="name" id="name" class="w-full p-2 border border-gray-300 rounded mt-1" required>
-        </div>
-        <div class="mb-4">
-            <label for="email" class="block text-gray-700">Email</label>
-            <input type="email" name="email" id="email" class="w-full p-2 border border-gray-300 rounded mt-1" required>
-        </div>
-        <div class="mb-4">
-            <label for="password" class="block text-gray-700">Password</label>
-            <input type="password" name="password" id="password" class="w-full p-2 border border-gray-300 rounded mt-1" required>
-        </div>
-        <div class="mb-4">
-            <label for="password_confirmation" class="block text-gray-700">Confirm Password</label>
-            <input type="password" name="password_confirmation" id="password_confirmation" class="w-full p-2 border border-gray-300 rounded mt-1" required>
-        </div>
-        <div class="mt-4">
-            <label for="gender" class="block text-gray-700">Gender</label>
-            <select id="gender" class="w-full p-2 border border-gray-300 rounded mt-1" name="gender" required>
-                <option value="Perempuan">Perempuan</option>
-                <option value="Laki-laki">Laki-laki</option>
-            </select>
-        </div>
-        <div class="mt-4">
-            <label for="birth_date" class="block text-gray-700">Birth Date</label>
-            <input type="date" id="birth_date" name="birth_date" class="w-full p-2 border border-gray-300 rounded mt-1" required>
-        </div>
-        <div class="mt-4">
-            <label for="phone_number" class="block text-gray-700">Phone Number</label>
-            <input type="tel" id="phone_number" name="phone_number" class="w-full p-2 border border-gray-300 rounded mt-1" required>
-        </div>
-        <div class="mt-4">
-            <label for="address" class="block text-gray-700">Address</label>
-            <textarea id="address" name="address" class="w-full p-2 border border-gray-300 rounded mt-1" required></textarea>
-        </div>
-        <div class="mt-4">
-            <label for="emergency_contact" class="block text-gray-700">Emergency Contact</label>
-            <input type="text" id="emergency_contact" name="emergency_contact" class="w-full p-2 border border-gray-300 rounded mt-1" required>
-        </div>
-        @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
-        <div class="mt-4">
-            <label for="terms" class="block text-gray-700">
-                <div class="flex items-center">
-                    <input type="checkbox" name="terms" id="terms" required>
-                    <div class="ml-2">
-                        {!! __('I agree to the :terms_of_service and :privacy_policy', [
-                        'terms_of_service' => '<a target="_blank" href="'.route('terms.show').'" class="underline text-sm text-gray-600 hover:text-gray-900">'.__('Terms of Service').'</a>',
-                        'privacy_policy' => '<a target="_blank" href="'.route('policy.show').'" class="underline text-sm text-gray-600 hover:text-gray-900">'.__('Privacy Policy').'</a>',
-                        ]) !!}
+        <form method="POST" action="{{ route('register') }}">
+            @csrf
+
+            <div>
+                <x-label for="name" value="{{ __('Nama Lengkap') }}" />
+                <x-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+            </div>
+
+            <div class="mt-4">
+                <x-label for="email" value="{{ __('Email') }}" />
+                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
+            </div>
+
+            <div class="mt-4">
+                <x-label for="password" value="{{ __('Kata Sandi') }}" />
+                <x-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
+            </div>
+
+            <div class="mt-4">
+                <x-label for="password_confirmation" value="{{ __('Konfirmasi Kata Sandi') }}" />
+                <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" />
+            </div>
+
+            <div class="mt-4 ">
+                <x-label for="gender" value="{{ __('Jenis Kelamin') }}" />
+                <select id="gender" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm block mt-1 w-full" type="text" name="gender" required>
+                    <option value="Perempuan">Perempuan</option>
+                    <option value="Laki-laki">Laki-laki</option>
+                </select>
+            </div>
+
+            <div class="mt-4">
+                <x-label for="birth_date" value="{{ __('Tanggal Lahir') }}" />
+                <x-input id="birth_date" class="block mt-1 w-full" type="date" name="birth_date" required />
+            </div>
+
+            <div class="mt-4">
+                <x-label for="phone_number" value="{{ __('Nomor Telpon/Wa') }}" />
+                <x-input id="phone_number" class="block mt-1 w-full" type="tel" name="phone_number" required />
+            </div>
+
+            <div class="mt-4">
+                <x-label for="address" value="{{ __('Alamat') }}" />
+                <textarea id="address" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm block mt-1 w-full" name="address" required></textarea>
+            </div>
+
+            <div class="mt-4">
+                <x-label for="emergency_contact" value="{{ __('Kontak Darurat') }}" />
+                <x-input id="emergency_contact" class="block mt-1 w-full" type="text" name="emergency_contact" required />
+            </div>
+
+            @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
+            <div class="mt-4">
+                <x-label for="terms">
+                    <div class="flex items-center">
+                        <x-checkbox name="terms" id="terms" required />
+
+                        <div class="ms-2">
+                            {!! __('I agree to the :terms_of_service and :privacy_policy', [
+                            'terms_of_service' => '<a target="_blank" href="'.route('terms.show').'" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">'.__('Terms of Service').'</a>',
+                            'privacy_policy' => '<a target="_blank" href="'.route('policy.show').'" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">'.__('Privacy Policy').'</a>',
+                            ]) !!}
+                        </div>
                     </div>
-                </div>
-            </label>
-        </div>
-        @endif
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-            <button type="submit" class="ml-4 bg-blue-500 text-white p-2 rounded">Register</button>
-        </div>
-    </form>
-</div>
-@endsection
+                </x-label>
+            </div>
+            @endif
+            <div class="flex items-center justify-end mt-4">
+                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
+                    {{ __('Already registered?') }}
+                </a>
+
+                <x-button class="ms-4">
+                    {{ __('Daftar') }}
+                </x-button>
+            </div>
+        </form>
+    </x-authentication-card>
+</x-guest-layout>

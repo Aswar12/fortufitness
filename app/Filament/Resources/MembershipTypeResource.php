@@ -17,7 +17,7 @@ class MembershipTypeResource extends Resource
 {
     protected static ?string $model = MembershipType::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-calendar';
+    protected static ?string $navigationIcon = 'heroicon-o-square-3-stack-3d';
     protected static ?string $navigationLabel = 'Jenis Keanggotaan';
 
     public static function form(Form $form): Form

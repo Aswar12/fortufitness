@@ -15,13 +15,12 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-use function Livewire\after;
-
 class MembershipResource extends Resource
 {
     protected static ?string $model = Membership::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-trophy';
+
+    protected static ?string $navigationIcon = 'heroicon-o-identification';
     protected static ?string $navigationLabel = 'Keanggotaan';
 
     public static function form(Form $form): Form
@@ -45,7 +44,7 @@ class MembershipResource extends Resource
                     }),
                 Forms\Components\Hidden::make('status')
                     ->label('Status')
-                    ->default('pending'),
+                    ->default('active'), // changed from 'pending' to 'active'
                 Forms\Components\Hidden::make('start_date')
                     ->label('Tanggal Mulai')
                     ->default(now()->format('Y-m-d')),
@@ -83,7 +82,15 @@ class MembershipResource extends Resource
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('Status'),
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'active' => 'success',
+                        'pending' => 'warning',
+                        'cancelled' => 'danger',
+                        'expired' => 'secondary',
+                        default => 'secondary',
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal Dibuat')
                     ->dateTime()
@@ -107,8 +114,6 @@ class MembershipResource extends Resource
                 ]),
             ]);
     }
-
-
 
     public static function getPages(): array
     {

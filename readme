@@ -1,4 +1,5 @@
-Tabel Users:
+Tabel Users
+
 id (primary key)
 name
 email
@@ -10,48 +11,109 @@ phone_number
 address
 emergency_contact
 device_token
-Tabel MembershipTypes:
+created_at
+updated_at
+Tabel MembershipTypes
+
 id (primary key)
 name
 duration
 price
 description
-Tabel Memberships:
+created_at
+updated_at
+Tabel Memberships
+
 id (primary key)
 user_id (foreign key)
 membership_type_id (foreign key)
 start_date
 end_date
-status
-Tabel CheckIns:
+status (active, pending, cancelled, expired)
+cancelled_at
+created_at
+updated_at
+Tabel CheckIns
+
 id (primary key)
 user_id (foreign key)
 check_in_time
 check_out_time
 check_in_method
-Tabel Expenses:
+created_at
+updated_at
+Tabel Expenses
+
 id (primary key)
 description
 amount
 date
 category
-Tabel Payments:
+user_id (foreign key)
+created_at
+updated_at
+Tabel Payments
+
 id (primary key)
 membership_id (foreign key)
 amount
 payment_date
 payment_method
-Tabel ApiTokens:
+proof_of_payment
+status (pending, completed, failed, refunded)
+created_at
+updated_at
+Tabel ApiTokens
+
 id (primary key)
 user_id (foreign key)
 token
-Saya juga telah mengingat relasi antara tabel-tabel tersebut, yaitu:
+created_at
+updated_at
+Tabel financial_reports
 
-User memiliki banyak Membership (one-to-many)
-Membership dimiliki oleh satu User (many-to-one)
-User melakukan banyak Payment (one-to-many)
-Payment dilakukan oleh satu Membership (many-to-one)
-User memiliki banyak Expense (one-to-many)
-Expense dimiliki oleh satu User (many-to-one)
-User memiliki satu ApiToken (one-to-one)
-ApiToken dimiliki oleh satu User (one-to-one)
+id (primary key)
+report_date
+total_revenue (decimal, 10, 2)
+total_expenses (decimal, 10, 2)
+net_income (decimal, 10, 2)
+total_memberships (integer)
+new_memberships (integer)
+cancelled_memberships (integer)
+total_check_ins (integer)
+average_daily_check_ins (float)
+top_membership_type (string)
+top_expense_category (string)
+total_pending_payments (decimal, 10, 2)
+total_completed_payments (decimal, 10, 2)
+total_failed_payments (decimal, 10, 2)
+total_refunded_payments (decimal, 10, 2)
+created_at
+updated_at
+Relasi antar tabel:
+
+Users:
+
+Memiliki satu Membership (one-to-one)
+Memiliki banyak Payment (melalui Membership, one-to-many)
+Memiliki banyak Expense (one-to-many)
+Memiliki banyak CheckIn (one-to-many)
+Memiliki satu ApiToken (one-to-one)
+MembershipTypes:
+
+Memiliki banyak Membership (one-to-many)
+Memberships:
+
+Dimiliki oleh satu User (one-to-one)
+Dimiliki oleh satu MembershipType (many-to-one)
+Memiliki banyak Payment (one-to-many)
+CheckIns:
+
+Dimiliki oleh satu User (many-to-one)
+Expenses:
+
+Dimiliki oleh satu User (many-to-one)
+Payments:
+
+Dimiliki oleh satu Membership (many-to-one)
+ApiTokens:

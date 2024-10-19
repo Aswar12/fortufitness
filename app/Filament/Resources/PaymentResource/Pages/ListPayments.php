@@ -16,4 +16,19 @@ class ListPayments extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+    protected function getActions(): array
+    {
+        return [
+            Action::make('reject')
+                ->label('Reject')
+                ->icon('heroicon-o-x')
+                ->color('danger')
+                ->action(fn(Payment $record) => route('payments.reject', $record)),
+            Action::make('verify')
+                ->label('Verify')
+                ->icon('heroicon-o-check')
+                ->color('success')
+                ->action(fn(Payment $record) => route('payments.verify', $record)),
+        ];
+    }
 }

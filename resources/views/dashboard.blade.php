@@ -1,25 +1,233 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-base md:text-xl text-gray-800  leading-tight">
+            {{ __('Dashboard') }}
+        </h2>
+    </x-slot>
 
-@extends('layouts.app')
+    <div class="py-2 ">
+        @if (session('success'))
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
+        </div> @endif
 
-@section('content')
-<div class="container mx-auto">
-    <h1 class="text-2xl font-bold mb-6">Dashboard</h1>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Card 1 -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
-            <h2 class="text-xl font-semibold mb-4">Card 1</h2>
-            <p class="text-gray-600">This is a description for card 1.</p>
+        @if (session('error'))
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline">{{ session('error') }}</span>
+            </div>
         </div>
-        <!-- Card 2 -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
-            <h2 class="text-xl font-semibold mb-4">Card 2</h2>
-            <p class="text-gray-600">This is a description for card 2.</p>
-        </div>
-        <!-- Card 3 -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
-            <h2 class="text-xl font-semibold mb-4">Card 3</h2>
-            <p class="text-gray-600">This is a description for card 3.</p>
+        @endif
+
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-gray-900 bg-opacity-10 overflow-hidden shadow-xl sm:rounded-lg">
+                <!-- Hero Section -->
+                <div class="hero-section ml-6 p-2 text-center md:text-left">
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">Selamat Datang di FortuFitness</h1>
+                    <p class="text-sm md:text-lg text-gray-600 dark:text-gray-100">Temukan Potensi Anda dalam Kebugaran</p>
+                </div>
+
+                <!-- Kartu Keanggotaan Digital Section -->
+                <div class="membership-card-section p-8">
+                    <h2 class="text-lg md:text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center md:text-left">
+                        <i class="fas fa-id-card"></i> Kartu Keanggotaan Digital
+                    </h2>
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md text-left md:text-center">
+                        @if($currentMembership && $qrCodeImage)
+                        <div class="flex justify-center mb-4">
+                            <img src="{{ $qrCodeImage }}" alt="QR Code">
+                        </div>
+                        <p class="text-sm md:text-lg text-gray-600 dark:text-white">
+                            <strong>Nama:</strong> {{ $currentUser ->name }}
+                        </p>
+                        <p class="text-sm md:text-lg text-gray-600 dark:text-white">
+                            <strong>ID Membership:</strong> {{ $currentMembership->id }}
+                        </p>
+                        <p class="text-sm md:text-lg text-gray-600 dark:text-white">
+                            <strong>Tipe Keanggotaan:</strong> {{ $currentMembership->membershipType->name ?? 'N/A' }}
+                        </p>
+                        @else
+                        <p class="text-sm md:text-lg text-gray-600 dark:text-white">
+                            Anda belum memiliki keanggotaan aktif. Silakan pilih paket keanggotaan untuk mengaktifkan kartu keanggotaan digital Anda.
+                        </p>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Check-In/Check-Out Section -->
+                <div class="checkin-checkout-section p-8">
+                    <h2 class="text-lg md:text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center md:text-left">
+                        <i class="fas fa-sign-in-alt"></i> Check-In / Check-Out
+                    </h2>
+                    <div class="p-4 rounded-lg shadow-md text-left md:text-center">
+                        @php
+                        $activeCheckIn = \App\Models\CheckIn::where('user_id', Auth::id())
+                        ->whereNull('check_out_time')
+                        ->first();
+                        @endphp
+
+                        @if ($activeCheckIn)
+                        <div class="bg-white dark:bg-transparent rounded-lg shadow-md p-6 mb-6">
+                            <p class="text-lg md:text-xl text-gray-800 dark:text-white font-semibold mb-2">Status Check-in</p>
+                            <p class="text-sm md:text-base text-gray-600 dark:text-gray-300 mb-4">
+                                Anda sedang check-in sejak:
+                                @php
+                                $checkInTime = \Carbon\Carbon::parse($activeCheckIn->check_in_time);
+                                @endphp
+                                <span class="font-medium">{{ $checkInTime->format('H:i') }}</span>
+                                <span class="text-gray-500 dark:text-gray-400">({{ $checkInTime->diffForHumans() }})</span>
+                            </p>
+                            <form action="{{ route('member.checkout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="bg-yellow hover:bg-gray-300 text-white font-bold py-2 px-4 rounded-full shadow-lg transform transition duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50">
+                                    <i class="fas fa-sign-out-alt mr-2"></i> Check Out
+                                </button>
+                            </form>
+                        </div>
+
+                        @endif
+                    </div>
+                </div>
+
+                <!-- User Info Section -->
+                <div class="user-info-section p-8 ">
+                    <h2 class="text-lg md:text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center md:text-left">
+                        <i class="fas fa-user"></i> Informasi Pengguna
+                    </h2>
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md text-left grid grid-cols-1 md:grid-cols-2 gap-4">
+                        @foreach([
+                        ['icon' => 'fas fa-user-circle', 'label' => 'Nama Pengguna', 'value' => $currentUser->name],
+                        ['icon' => 'fas fa-check-circle', 'label' => 'Status Keanggotaan', 'value' => $currentMembership->status ?? 'Belum Aktif'],
+                        ['icon' => 'fas fa-calendar-alt', 'label' => 'Tanggal Bergabung', 'value' => $currentUser->created_at->format('d M Y')],
+                        ['icon' => 'fas fa-calendar-check', 'label' => 'Jumlah Kehadiran', 'value' => $currentUser->checkIns()->count()],
+                        ['icon' => 'fas fa-crown', 'label' => 'Paket Keanggotaan', 'value' => $currentMembership->membershipType->name ?? 'Belum Memilih Paket'],
+                        ['icon' => 'fas fa-hourglass-half', 'label' => 'Sisa Hari Keanggotaan', 'value' => $currentMembership && $currentMembership->end_date ? ceil(\Carbon\Carbon::parse($currentMembership->end_date)->diffInDays(\Carbon\Carbon::now(), false)) : 'Belum Ada Sisa Hari'],
+                        ] as $item)
+                        <div class="flex justify-between">
+                            <p class="text-sm md:text-lg text-gray-600 dark:text-white flex items-center w-1/2">
+                                <i class="{{ $item['icon'] }} mr-2"></i>
+                                <strong>{{ $item['label'] }}</strong>
+                            </p>
+                            <p class="text-sm md:text-lg truncate text-gray-600 dark:text-white w-1/2">:
+                                {{ $item['value'] }}
+                            </p>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Statistik Section -->
+                <!-- <div class="stats-section p-8">
+                    <div class="flex flex-wrap justify-start md:justify-center -mx-4">
+                        <div class="w-full md:w-1/2 xl:w-1/3 p-4 order-1">
+                            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md text-left md:text-center">
+                                <h2 class="text-lg md:text-2xl font-bold text-gray-800 dark:text-white"><i class="fas fa-users"></i> Anggota</h2>
+                                <p class="text-sm md:text-lg text-gray-600 dark:text-gray-100">{{ App\Models\User::count() }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+                <!-- Kalender Keanggotaan Section -->
+                <div class="membership-calendar-section p-8">
+                    <h2 class="text-lg md:text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center md:text-left">
+                        <i class="fas fa-calendar-alt"></i> Kalender Keanggotaan
+                    </h2>
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                        @if($currentMembership)
+                        @php
+                        $startDate = $currentMembership->start_date ? \Carbon\Carbon::parse($currentMembership->start_date) : null;
+                        $endDate = $currentMembership->end_date ? \Carbon\Carbon::parse($currentMembership->end_date) : null;
+                        $today = \Carbon\Carbon::now();
+                        $totalDays = $startDate && $endDate ? $startDate->diffInDays($endDate) : 0;
+                        $remainingDays = $endDate ? ceil($today->diffInDays($endDate, false)) : 0;
+
+                        // Ambil data check-in member
+                        $checkIns = $currentUser->checkIns()
+                        ->whereBetween('check_in_time', [$startDate, $endDate])
+                        ->pluck('check_in_time')
+                        ->map(function($date) {
+                        return $date->format('Y-m-d');
+                        })
+                        ->toArray();
+                        @endphp
+
+                        @if($startDate && $endDate)
+                        <div class="flex flex-wrap justify-center">
+                            @for($i = 0; $i < $totalDays; $i++)
+                                @php
+                                $currentDate=$startDate->copy()->addDays($i);
+                                $isPast = $currentDate->isPast();
+                                $isToday = $currentDate->isToday();
+                                $hasCheckedIn = in_array($currentDate->format('Y-m-d'), $checkIns);
+                                @endphp
+                                <div class="w-8 h-8 m-1 rounded-full flex items-center justify-center text-xs
+                            @if($hasCheckedIn)
+                                bg-yellow dark:bg-yellow
+                            @elseif($isPast)
+                                bg-gray-200 dark:bg-gray-600
+                            @else
+                                bg-gray-800 dark:bg-gray-400
+                            @endif
+                        ">
+                                    {{ $currentDate->format('d') }}
+                                </div>
+                                @endfor
+                        </div>
+                        <div class="mt-4 text-center">
+                            <p class="text-sm md:text-base text-gray-600 dark:text-white">
+                                Sisa masa keanggotaan: <span class="font-bold">{{ $remainingDays }} hari</span>
+                            </p>
+                            <p class="text-xs md:text-sm text-gray-500 dark:text-gray-300 mt-2">
+                                Mulai: {{ $startDate->format('d M Y') }} | Berakhir: {{ $endDate->format('d M Y') }}
+                            </p>
+                        </div>
+                        @else
+                        <p class="text-sm md:text-base text-gray-600 dark:text-white text-center">
+                            Data keanggotaan tidak lengkap.
+                        </p>
+                        @endif
+                        @else
+                        <p class="text-sm md:text-base text-gray-600 dark:text-white text-center">
+                            Anda belum memiliki keanggotaan aktif.
+                        </p>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Daftar Member Check-In Section -->
+                <div class="checkin-section p-8">
+                    <h2 class="text-lg md:text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center md:text-left"><i class="fas fa-user-check"></i> Daftar Member yang Sedang Check-In</h2>
+                    <div class="flex flex-wrap justify-center -mx-4 overflow-y-auto h-64">
+                        @foreach(App\Models\CheckIn::whereNull('check_out_time')->get() as $checkIn)
+                        <div class="w-full md:w-1/2 xl:w-1/3 p-4 md:p-6">
+                            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md flex flex-row items-center">
+                                <div class="w-24 h-24 mr-4">
+                                    @if($checkIn->user->profile_photo_url)
+                                    <img src="{{  $checkIn->user->profile_photo_url }}" alt="Foto Profil" class="w-full h-full object-cover rounded-full">
+                                    @else
+                                    <img src="{{ asset('images/default-profile-picture.jpg') }}" alt="Foto Profil" class="w-full h-full object-cover rounded-full">
+                                    @endif
+                                </div>
+                                <div class="flex-1 flex flex-col">
+                                    <h3 class="text-sm md:text-lg font-bold text-gray-800 dark:text-white"><i class="fas fa-user"></i> {{ $checkIn->user->name }}</h3>
+                                    <p class="text-xs md:text-sm text-gray-600 dark:text-gray-100 mt-1">
+                                        <i class="fas fa-clock"></i> Check-In:
+                                        @php
+                                        $checkInTime = \Carbon\Carbon::parse($checkIn->check_in_time);
+                                        @endphp
+                                        {{ $checkInTime->format('H:i') }}
+                                        ({{ $checkInTime->diffForHumans() }})
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
-@endsection
+</x-app-layout>

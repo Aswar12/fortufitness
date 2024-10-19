@@ -5,24 +5,39 @@ namespace Database\Factories;
 use App\Models\MembershipType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\MembershipType>
- */
 class MembershipTypeFactory extends Factory
 {
+    protected $model = MembershipType::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
-        return [
-            'name' => $this->faker->word,
-            'duration' => $this->faker->randomNumber(2),
-            'price' => $this->faker->randomNumber(5),
-            'description' => $this->faker->paragraph,
+        $types = [
+            [
+                'name' => 'Bronze',
+                'duration' => 30,
+                'price' => 300000,
+                'description' => 'Akses dasar ke fasilitas gym selama 1 bulan.',
+            ],
+            [
+                'name' => 'Silver',
+                'duration' => 90,
+                'price' => 800000,
+                'description' => 'Akses penuh ke fasilitas gym dan 1 sesi konsultasi gratis selama 3 bulan.',
+            ],
+            [
+                'name' => 'Gold',
+                'duration' => 180,
+                'price' => 1500000,
+                'description' => 'Akses penuh ke fasilitas gym, 3 sesi konsultasi gratis, dan akses ke kelas-kelas khusus selama 6 bulan.',
+            ],
+            [
+                'name' => 'Platinum',
+                'duration' => 365,
+                'price' => 2500000,
+                'description' => 'Akses VIP ke semua fasilitas gym, konsultasi tak terbatas, akses prioritas ke semua kelas, dan pelatih pribadi selama 1 tahun.',
+            ],
         ];
+
+        return $this->faker->randomElement($types);
     }
 }
