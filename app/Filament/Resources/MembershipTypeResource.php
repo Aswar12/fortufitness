@@ -69,10 +69,16 @@ class MembershipTypeResource extends Resource
             ])
             ->filters([
                 //
-            ])
+            ])->searchable()
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()->label('Edit'),
+
+                Tables\Actions\DeleteAction::make() // Menambahkan aksi hapus
+                    ->action(function (FinancialReport $record) {
+                        $record->delete(); // Logika hapus
+                    })->label('Hapus')
+                    ->color('danger') // Menandai tombol dengan warna merah
+                    ->requiresConfirmation(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

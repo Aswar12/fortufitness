@@ -73,6 +73,14 @@ class BankAccountResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()->label('Ubah'),
+                Tables\Actions\EditAction::make()->label('Edit'),
+
+                Tables\Actions\DeleteAction::make() // Menambahkan aksi hapus
+                    ->action(function (FinancialReport $record) {
+                        $record->delete(); // Logika hapus
+                    })->label('Hapus')
+                    ->color('danger') // Menandai tombol dengan warna merah
+                    ->requiresConfirmation(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

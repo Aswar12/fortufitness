@@ -79,7 +79,15 @@ class CheckInResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()->label('Ubah'),
-            ])
+
+
+                Tables\Actions\DeleteAction::make() // Menambahkan aksi hapus
+                    ->action(function (FinancialReport $record) {
+                        $record->delete(); // Logika hapus
+                    })->label('Hapus')
+                    ->color('danger') // Menandai tombol dengan warna merah
+                    ->requiresConfirmation(),
+            ])->searchable()
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()->label('Hapus'),

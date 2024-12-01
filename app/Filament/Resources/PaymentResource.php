@@ -82,7 +82,7 @@ class PaymentResource extends Resource
             ->actions([
                 ViewAction::make()->label('Lihat'),
                 Tables\Actions\EditAction::make()->label('Ubah'),
-            ])
+            ])->searchable()
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()->label('Hapus'),

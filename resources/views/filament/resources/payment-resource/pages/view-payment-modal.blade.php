@@ -7,7 +7,8 @@
                 ['label' => 'ID', 'value' => $payment->id],
                 ['label' => 'Jumlah', 'value' => 'Rp ' . number_format($payment->amount, 0, ',', '.')],
                 ['label' => 'Metode Pembayaran', 'value' => $payment->payment_method],
-                ['label' => 'Status', 'value' => $payment->status]
+                ['label' => 'Status', 'value' => $payment->status],
+                ['label' => 'Tanggal Pembayaran', 'value' => \Carbon\Carbon::parse($payment->created_at)->format('d-m-Y')] // Menambahkan tanggal pembayaran
                 ] as $info)
                 <div class="bg-white rounded-lg shadow p-4">
                     <h3 class="text-lg font-medium text-gray-900">{{ $info['label'] }}</h3>

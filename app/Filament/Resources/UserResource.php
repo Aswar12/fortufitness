@@ -62,7 +62,7 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nama Lengkap')
                     ->searchable(),
-                    Tables\Columns\TextColumn::make('address')
+                Tables\Columns\TextColumn::make('address')
                     ->label('Alamat '),
                 Tables\Columns\TextColumn::make('email')
                     ->label('Alamat Email')
@@ -71,8 +71,8 @@ class UserResource extends Resource
                     ->label('Foto Profil')
                     ->height(50),
                 Tables\Columns\TextColumn::make('role')
-                    ->label('Role'), 
-                
+                    ->label('Role'),
+
                 Tables\Columns\TextColumn::make('gender')
                     ->label('Jenis Kelamin')
                     ->searchable(),
@@ -91,7 +91,14 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->label('Edit'),
+
+                Tables\Actions\DeleteAction::make() // Menambahkan aksi hapus
+                    ->action(function (FinancialReport $record) {
+                        $record->delete(); // Logika hapus
+                    })->label('Hapus')
+                    ->color('danger') // Menandai tombol dengan warna merah
+                    ->requiresConfirmation(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

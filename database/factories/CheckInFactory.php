@@ -22,7 +22,15 @@ class CheckInFactory extends Factory
             // Jika user memiliki membership, buat check-in acak dalam rentang membership
             $startDate = Carbon::parse($membership->start_date);
             $endDate = Carbon::parse($membership->end_date);
-            $checkInDate = $this->faker->dateTimeBetween($startDate, $endDate);
+
+            // Validasi bahwa startDate harus lebih awal dari endDate
+            if ($startDate->greaterThanOrEqualTo($endDate)) {
+                // Jika tidak valid, gunakan tanggal hari ini
+                $checkInDate = now();
+            } else {
+                // Buat check-in dalam rentang yang valid
+                $checkInDate = $this->faker->dateTimeBetween($startDate, $endDate);
+            }
         }
 
         $checkInTime = Carbon::parse($checkInDate)->setTime(

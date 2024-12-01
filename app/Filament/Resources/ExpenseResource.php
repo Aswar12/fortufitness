@@ -34,15 +34,15 @@ class ExpenseResource extends Resource
                     ->label('Jumlah')
                     ->formatStateUsing(fn($record) => $record ? 'Rp ' . number_format($record->amount, 0, ',', '.') : 'N/A')
                     ->required(),
-                Forms\Components\DatePicker::make('date') 
+                Forms\Components\DatePicker::make('date')
                     ->label('Tanggal')
                     ->required(),
                 Forms\Components\Select::make('category')
-                ->options([
-                    'operational' => 'Operasional',
-                    'maintenance' => 'Pemeliharaan',
-                    'marketing' => 'Pemasaran',
-                ])
+                    ->options([
+                        'operational' => 'Operasional',
+                        'maintenance' => 'Pemeliharaan',
+                        'marketing' => 'Pemasaran',
+                    ])
                     ->label('Kategori')
                     ->required(),
             ]);
@@ -106,8 +106,17 @@ class ExpenseResource extends Resource
                         }
                     }),
             ])
+            ->searchable()
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->label('Edit'),
+
+                Tables\Actions\DeleteAction::make() // Menambahkan aksi hapus
+                    ->action(function (FinancialReport $record) {
+                        $record->delete(); // Logika hapus
+                    })->label('Hapus')
+                    ->color('danger') // Menandai tombol dengan warna merah
+                    ->requiresConfirmation(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
