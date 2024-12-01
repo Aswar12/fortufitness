@@ -175,7 +175,7 @@ class FinancialReportResource extends Resource
 
                 Tables\Columns\TextColumn::make('report_date')
                     ->label('Periode Laporan')
-                    ->date('F Y')
+                    ->date('d F Y')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('total_revenue')

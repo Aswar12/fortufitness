@@ -70,6 +70,7 @@ class PaymentResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable()->label('ID'),
+                Tables\Columns\TextColumn::make('membership.user.name')->sortable()->label('Nama User'),
                 Tables\Columns\TextColumn::make('amount')->money('IDR')->sortable()->label('Jumlah'),
                 Tables\Columns\TextColumn::make('payment_method')->sortable()->label('Metode'),
                 Tables\Columns\TextColumn::make('status')->sortable()->label('Status'),

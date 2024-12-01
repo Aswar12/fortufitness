@@ -39,7 +39,7 @@
                             onchange="previewImage(event)">
                         <img id="preview" src="#" alt="Preview" style="display: none; max-width: 300px; margin-top: 10px;" class="mt-2 rounded-md shadow-md">
                     </div>
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold py-2 px-4 rounded-lg shadow-md transition duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                         <i class="fas fa-upload mr-2"></i> Upload Bukti Pembayaran
                     </button>
                 </form>

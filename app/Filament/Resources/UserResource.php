@@ -72,7 +72,6 @@ class UserResource extends Resource
                     ->height(50),
                 Tables\Columns\TextColumn::make('role')
                     ->label('Role'),
-
                 Tables\Columns\TextColumn::make('gender')
                     ->label('Jenis Kelamin')
                     ->searchable(),
