@@ -17,10 +17,11 @@ class PaymentController extends Controller
 {
     public function process($paymentId)
     {
+        $bankAccounts = BankAccount::all();
         $payment = Payment::findOrFail($paymentId);
         $membership = Membership::findOrFail($payment->membership_id);
 
-        return view('payments.process', compact('payment', 'membership'));
+        return view('payments.process', compact('payment', 'membership', 'bankAccounts'));
     }
 
     public function uploadProof(Request $request, $paymentId)

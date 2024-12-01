@@ -20,15 +20,39 @@
             </div>
 
             <div class="mt-4">
-                <x-label for="password" value="{{ __('Kata Sandi') }}" />
-                <x-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
-            </div>
+    <x-label for="password" value="{{ __('Kata Sandi') }}" />
+    <div class="relative">
+        <x-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
+        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm text-gray-100 hover:text-gray-200" onclick="togglePassword('password')">
+            <span id="password-eye" class="material-icons"></span>
+        </button>
+    </div>
+</div>
 
-            <div class="mt-4">
-                <x-label for="password_confirmation" value="{{ __('Konfirmasi Kata Sandi') }}" />
-                <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" />
-            </div>
+<div class="mt-4">
+    <x-label for="password_confirmation" value="{{ __('Konfirmasi Kata Sandi') }}" />
+    <div class="relative">
+        <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" />
+        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm text-gray-100 hover:text-gray-200" onclick="togglePassword('password_confirmation')">
+            <span id="password-confirmation-eye" class="material-icons"></span>
+        </button>
+    </div>
+</div>
 
+<script>
+    function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        const eyeIcon = inputId === 'password' ? document.getElementById('password-eye') : document.getElementById('password-confirmation-eye');
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            eyeIcon.textContent = 'visibility_off'; // Change icon to "visibility_off"
+        } else {
+            input.type = 'password';
+            eyeIcon.textContent = 'visibility'; // Change icon back to "visibility"
+        }
+    }
+</script>
             <div class="mt-4 ">
                 <x-label for="gender" value="{{ __('Jenis Kelamin') }}" />
                 <select id="gender" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm block mt-1 w-full" type="text" name="gender" required>

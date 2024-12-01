@@ -59,7 +59,6 @@ class DashboardController extends Controller
                 $result = $writer->write($qrCode);
                 return $result->getDataUri();
             } catch (\Exception $e) {
-                \Log::error("Failed to generate QR Code: " . $e->getMessage());
                 return null;
             }
         });

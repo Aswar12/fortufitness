@@ -14,6 +14,7 @@ class Expense extends Model
         'expense_type_id',
         'amount',
         'description',
+        'category',
         'date',
     ];
 
@@ -24,6 +25,6 @@ class Expense extends Model
 
     public function expenseType()
     {
-        return $this->belongsTo(ExpenseType::class);
+ 
     }
 }

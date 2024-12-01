@@ -12,13 +12,20 @@ use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\MemberCheckInOutController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MembershipController;
-
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 // Halaman utama
 Route::get('/', [LandingPageController::class, 'index'])->name('landing');
-
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');    
 // Rute untuk pendaftaran pengguna baru
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
-
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
+    return redirect('/dashboard'); // Ganti dengan rute yang sesuai
+})->middleware(['auth', 'signed'])->name('verification.verify');
 // Grup rute yang memerlukan autentikasi dan verifikasi
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified', CheckRole::class])->group(function () {
 

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CheckIn;
-use App\Services\CheckInOutService;
+use App\Helpers\CheckInOutService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -15,8 +15,7 @@ class MemberCheckInOutController extends Controller
     public function __construct(CheckInOutService $checkInOutService)
     {
         $this->checkInOutService = $checkInOutService;
-        $this->middleware('auth');
-        $this->middleware('active.membership');
+       
     }
 
     public function checkIn(Request $request)
@@ -24,11 +23,10 @@ class MemberCheckInOutController extends Controller
         try {
             $result = $this->checkInOutService->checkIn(Auth::id());
             if ($result) {
-                Log::info('User ' . Auth::id() . ' checked in successfully');
+                Log::info('User  ' . Auth::id() . ' checked in successfully');
                 return redirect()->route('dashboard')->with('success', 'Check-in berhasil.');
-            } else {
-                return redirect()->route('dashboard')->with('error', 'Anda sudah melakukan check-in sebelumnya atau tidak memiliki membership aktif.');
             }
+            return redirect()->route('dashboard')->with('error', 'Anda sudah melakukan check-in sebelumnya atau tidak memiliki membership aktif.');
         } catch (\Exception $e) {
             Log::error('Check-in failed for user ' . Auth::id() . ': ' . $e->getMessage());
             return redirect()->route('dashboard')->with('error', 'Terjadi kesalahan saat melakukan check-in.');
@@ -40,11 +38,10 @@ class MemberCheckInOutController extends Controller
         try {
             $result = $this->checkInOutService->checkOut(Auth::id());
             if ($result) {
-                Log::info('User ' . Auth::id() . ' checked out successfully');
+                Log::info('User  ' . Auth::id() . ' checked out successfully');
                 return redirect()->route('dashboard')->with('success', 'Check-out berhasil.');
-            } else {
-                return redirect()->route('dashboard')->with('error', 'Tidak ada check-in aktif.');
             }
+            return redirect()->route('dashboard')->with('error', 'Tidak ada check-in aktif.');
         } catch (\Exception $e) {
             Log::error('Check-out failed for user ' . Auth::id() . ': ' . $e->getMessage());
             return redirect()->route('dashboard')->with('error', 'Terjadi kesalahan saat melakukan check-out.');

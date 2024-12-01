@@ -32,12 +32,17 @@ class ExpenseResource extends Resource
                     ->required(),
                 Forms\Components\TextInput::make('amount')
                     ->label('Jumlah')
-                    ->formatStateUsing(fn($record) => 'Rp ' . number_format($record->amount, 0, ',', '.'))
+                    ->formatStateUsing(fn($record) => $record ? 'Rp ' . number_format($record->amount, 0, ',', '.') : 'N/A')
                     ->required(),
-                Forms\Components\DatePicker::make('date')
+                Forms\Components\DatePicker::make('date') 
                     ->label('Tanggal')
                     ->required(),
                 Forms\Components\Select::make('category')
+                ->options([
+                    'operational' => 'Operasional',
+                    'maintenance' => 'Pemeliharaan',
+                    'marketing' => 'Pemasaran',
+                ])
                     ->label('Kategori')
                     ->required(),
             ]);

@@ -62,6 +62,8 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nama Lengkap')
                     ->searchable(),
+                    Tables\Columns\TextColumn::make('address')
+                    ->label('Alamat '),
                 Tables\Columns\TextColumn::make('email')
                     ->label('Alamat Email')
                     ->searchable(),
@@ -69,7 +71,8 @@ class UserResource extends Resource
                     ->label('Foto Profil')
                     ->height(50),
                 Tables\Columns\TextColumn::make('role')
-                    ->label('Role'),
+                    ->label('Role'), 
+                
                 Tables\Columns\TextColumn::make('gender')
                     ->label('Jenis Kelamin')
                     ->searchable(),
