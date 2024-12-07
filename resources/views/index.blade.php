@@ -19,22 +19,40 @@
             Fortu Fitness
         </div>
         @if (Route::has('login'))
-        <nav class="flex items-center">
-            <button id="mobile-menu-button" class="md:hidden text-white">
+        <nav class="relative">
+            <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
                 <i class="fas fa-bars"></i>
             </button>
-            <div id="mobile-menu" class="hidden md:flex flex-col md:flex-row md:items-center md:space-x-4">
+            <div id="mobile-menu" class="hidden absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg z-10">
+                <div class="flex flex-col">
+                    @auth
+                    <a href="{{ url('/dashboard') }}" class="block rounded-md px-4 py-2 text-white bg-yellow-500 hover:bg-yellow-600 transition">
+                        Dashboard
+                    </a>
+                    @else
+                    <a href="{{ route('login') }}" class="flex items-center block rounded-md px-4 py-2 text-white hover:bg-yellow-600 transition">
+                        <i class="fas fa-sign-in-alt mr-2"></i> Log in
+                    </a>
+                    @if (Route::has('register'))
+                    <a href="{{ route('register') }}" class="flex items-center block rounded-md px-4 py-2 text-white hover:bg-yellow-600 transition">
+                        <i class="fas fa-user-plus mr-2"></i> Register
+                    </a>
+                    @endif
+                    @endauth
+                </div>
+            </div>
+            <div class="hidden md:flex md:items-center md:space-x-4">
                 @auth
                 <a href="{{ url('/dashboard') }}" class="block mt-4 md:mt-0 rounded-md px-4 py-2 text-white bg-yellow-500 hover:bg-yellow-600 transition">
                     Dashboard
                 </a>
                 @else
-                <a href="{{ route('login') }}" class="block mt-4 md:mt-0 rounded-md px-4 py-2 text-white bg-yellow-500 hover:bg-yellow-600 transition">
-                    Log in
+                <a href="{{ route('login') }}" class="flex items-center block mt-4 md:mt-0 rounded-md px-4 py-2 text-white bg-yellow-500 hover:bg-yellow-600 transition">
+                    <i class="fas fa-sign-in-alt mr-2"></i> Log in
                 </a>
                 @if (Route::has('register'))
-                <a href="{{ route('register') }}" class="block mt-4 md:mt-0 rounded-md px-4 py-2 text-white bg-yellow-500 hover:bg-yellow-600 transition">
-                    Register
+                <a href="{{ route('register') }}" class="flex items-center block mt-4 md:mt-0 rounded-md px-4 py-2 text-white bg-yellow-500 hover:bg-yellow-600 transition">
+                    <i class="fas fa-user-plus mr-2"></i> Register
                 </a>
                 @endif
                 @endauth
@@ -42,6 +60,14 @@
         </nav>
         @endif
     </header>
+
+    <script>
+        // JavaScript untuk menangani tombol hamburger
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+    </script>
 
     <main class="text-center">
         <div class="relative">
@@ -184,7 +210,7 @@
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <div class="mb-6 md:mb-0">
-                    <h3 class="text-xl md:text-2xl font-bold mb-4">Fortu Fitness Barru</h3>
+                    <h3 class="text-xl md:text-2xl font-bold mb-4">FortuFitness Barru</h3>
                     <p class="text-sm md:text-base">Wujudkan impian tubuh ideal dan hidup sehat bersama kami.</p>
                 </div>
                 <div class="mb-6 md:mb-0">
