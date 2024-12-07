@@ -108,11 +108,9 @@ class ExpenseResource extends Resource
             ])
             ->searchable()
             ->actions([
-                Tables\Actions\EditAction::make(),
                 Tables\Actions\EditAction::make()->label('Edit'),
-
                 Tables\Actions\DeleteAction::make() // Menambahkan aksi hapus
-                    ->action(function (FinancialReport $record) {
+                    ->action(function (Expense $record) {
                         $record->delete(); // Logika hapus
                     })->label('Hapus')
                     ->color('danger') // Menandai tombol dengan warna merah

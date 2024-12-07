@@ -14,6 +14,8 @@
         "endroid/qr-code": "^5.1",
         "filament/filament": "^3.2",
         "google/cloud-vision": "^1.10",
+        "laravel-lang/lang": "^15.9",
+        "laravel-lang/publisher": "^16.4",
         "laravel/framework": "^11.9",
         "laravel/jetstream": "^5.2",
         "laravel/sanctum": "^4.0",

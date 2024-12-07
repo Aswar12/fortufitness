@@ -467,6 +467,5 @@ class FinancialReportResource extends Resource
 
             throw $e;
         }
-        dd($totalMemberships);
     }
 }
