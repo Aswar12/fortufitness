@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Filters\DateFilter;
 use Filament\Tables\Filters\Filter;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ExpenseResource extends Resource
 {
@@ -115,6 +116,10 @@ class ExpenseResource extends Resource
                     })->label('Hapus')
                     ->color('danger') // Menandai tombol dengan warna merah
                     ->requiresConfirmation(),
+                Tables\Actions\Action::make('print')
+                    ->label('Cetak')
+                    ->icon('heroicon-o-printer')
+                    ->action(fn(Expense $record) => self::printReport($record)),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
@@ -135,6 +140,30 @@ class ExpenseResource extends Resource
             'index' => Pages\ListExpenses::route('/'),
             'create' => Pages\CreateExpense::route('/create'),
             'edit' => Pages\EditExpense::route('/{record}/edit'),
+
         ];
+    }
+
+
+
+
+    public static function printReport(Expense $record)
+    {
+        $pdf = PDF::loadView('print.expense-pdf', ['expense' => $record]);
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, 'pengeluaran-' . $record->id . '.pdf');
+    }
+
+    public static function printAllReports()
+    {
+        $expenses = Expense::all();
+
+        $pdf = PDF::loadView('print.all-expenses-pdf', ['expenses' => $expenses]);
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, 'pengeluaran-semua.pdf');
     }
 }

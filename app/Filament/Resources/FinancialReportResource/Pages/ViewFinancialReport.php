@@ -123,7 +123,7 @@ class ViewFinancialReport extends ViewRecord
     {
         $report = $this->record;
 
-        $pdf = PDF::loadView('financial-report-pdf', ['report' => $report]);
+        $pdf = PDF::loadView('print.financial-report-pdf', ['report' => $report]);
 
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->output();
